@@ -13,13 +13,13 @@
         <!-- 菜单 -->
         <div class="navbar-menu">
           <a href="#features" class="menu-item">核心功能</a>
-          <a href="#showcase" class="menu-item">模型库</a>
-          <a href="#docs" class="menu-item">文档</a>
+          <a href="#audience" class="menu-item">目标用户</a>
+          <a href="#cta" class="menu-item">立即体验</a>
         </div>
 
         <!-- 行动按钮 -->
         <div class="navbar-actions">
-          <a href="#" class="btn-cta">立即体验</a>
+          <a href="#" class="btn-cta">敬请期待</a>
         </div>
       </div>
     </div>

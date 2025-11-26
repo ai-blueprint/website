@@ -1,5 +1,5 @@
 <template>
-  <section class="audience">
+  <section id="audience" class="audience">
     <div class="container">
       <div class="audience-grid">
         <!-- 左边：小白用户 -->
@@ -172,6 +172,7 @@ import Icon from './Icon.vue'
   align-items: center;
   gap: 0.75rem;
   font-size: 1.125rem;
+  font-weight: 500;
   line-height: 1.6;
 }
 

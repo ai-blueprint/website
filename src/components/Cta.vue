@@ -1,10 +1,10 @@
 <template>
-  <section class="cta">
+  <section id="cta" class="cta">
     <div class="container">
       <div class="cta-content">
-        <h2 class="cta-title">准备好开始炼丹了吗？</h2>
-        <p class="cta-description">无需安装，浏览器打开即用。基于 Vue3 构建，轻量高效。</p>
-        <a href="#" class="btn-cta">免费创建我的第一个模型</a>
+        <h2 class="cta-title">准备好开始炼丹了吗</h2>
+        <p class="cta-description">下载安装，打开即用。无需配置环境，简单便捷。</p>
+        <a href="#" class="btn-cta">下载·敬请期待</a>
       </div>
     </div>
   </section>
