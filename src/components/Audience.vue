@@ -9,21 +9,15 @@
             <h3 class="card-title">AI 初学者</h3>
             <ul class="card-list">
               <li class="list-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="list-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
+                <Icon class="list-icon" />
                 无需深究底层代码语法
               </li>
               <li class="list-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="list-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
+                <Icon class="list-icon" />
                 直观理解数据流向与维度变化
               </li>
               <li class="list-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="list-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
+                <Icon class="list-icon" />
                 快速上手复现经典模型
               </li>
             </ul>
@@ -37,21 +31,15 @@
             <h3 class="card-title">算法工程师</h3>
             <ul class="card-list">
               <li class="list-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="list-icon list-icon-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                分钟级快速架构验证
+                <Icon class="list-icon" />
+                分钟级架构验证
               </li>
               <li class="list-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="list-icon list-icon-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
+                <Icon class="list-icon" />
                 快速进行消融实验
               </li>
               <li class="list-item">
-                <svg xmlns="http://www.w3.org/2000/svg" class="list-icon list-icon-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
+                <Icon class="list-icon" />
                 无需手动调整维度对齐
               </li>
             </ul>
@@ -63,6 +51,7 @@
 </template>
 
 <script setup>
+import Icon from './Icon.vue'
 // 组合式 API 逻辑
 </script>
 
@@ -131,7 +120,7 @@
 }
 
 .card-dark {
-  background-color: var(--slate-900);
+  background-color: var(--purple-500);
 }
 
 .card-background {
@@ -150,7 +139,7 @@
 }
 
 .card-dark .card-background {
-  background-color: var(--slate-800);
+  background-color: var(--purple-400);
   left: -2.5rem;
   top: -2.5rem;
 }
@@ -191,7 +180,7 @@
 }
 
 .card-dark .list-item {
-  color: var(--slate-300);
+  color: var(--purple-100);
 }
 
 .list-icon {
@@ -204,7 +193,4 @@
   color: var(--white);
 }
 
-.list-icon-purple {
-  color: var(--purple-400);
-}
 </style>

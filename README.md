@@ -1,24 +1,163 @@
-# website
+# 炼丹蓝图官网
 
-## Project setup
-```
+## 项目简介
+
+炼丹蓝图的官方网站，旨在让用户了解和使用这个可视化的AI架构设计工具。网站采用现代、简洁的设计风格，突出产品的核心功能和优势。
+
+## 技术栈
+
+- **Vue 3** - 使用组合式API开发
+- **Vue CLI** - 构建工具（不使用Vite）
+- **纯CSS** - 不使用Tailwind，直接编写CSS样式
+- **CSS变量** - 用于主题管理和样式复用
+- **响应式设计** - 适配移动端和桌面端
+
+## 组件设计
+
+### Navbar（导航栏）
+- **功能**：网站顶部导航，包含Logo、菜单和行动按钮
+- **设计思路**：固定在顶部，使用半透明背景和毛玻璃效果，提升视觉层次感
+- **响应式**：在移动端自动调整布局
+
+### Hero（Hero区域）
+- **功能**：网站首页的核心展示区域
+- **设计思路**：使用渐变文字和动画效果，突出产品的核心价值主张
+- **特色**：包含模拟编辑器界面，直观展示产品功能
+
+### Features（核心特性）
+- **功能**：展示产品的三个核心功能
+- **设计思路**：使用卡片式布局，每个卡片包含图标、标题和描述
+- **交互**：卡片悬停时有轻微的上浮效果，提升用户体验
+
+### Audience（适用人群）
+- **功能**：展示产品的适用人群
+- **设计思路**：左右分栏对比设计，分别展示AI初学者和算法工程师的使用场景
+- **视觉**：使用不同的背景色区分两个部分，增强视觉对比
+
+### Cta（行动召唤）
+- **功能**：引导用户采取行动（如注册、试用）
+- **设计思路**：简洁明了的布局，突出行动按钮
+- **视觉**：使用渐变背景和阴影效果，吸引用户注意力
+
+### Footer（页脚）
+- **功能**：包含网站的辅助链接和版权信息
+- **设计思路**：多列布局，包含产品链接、资源链接和联系信息
+- **响应式**：在移动端自动调整为单列布局
+
+## 样式设计
+
+### CSS变量
+
+项目使用CSS变量来管理主题色和样式，便于统一修改和维护。主要变量包括：
+
+- **主题色**：`--primary-color`、`--secondary-color`、`--accent-purple`等
+- **背景色**：`--brand-bg`、`--white`、`--slate-50`等
+- **阴影**：`--shadow-soft`、`--shadow-card`、`--shadow-lg`等
+- **圆角**：`--radius-sm`、`--radius-md`、`--radius-lg`等
+
+### 响应式设计
+
+网站采用响应式设计，适配不同屏幕尺寸：
+
+- **移动端**：< 640px
+- **平板**：640px - 1024px
+- **桌面端**：> 1024px
+
+使用CSS媒体查询来调整布局和样式，确保在不同设备上都有良好的显示效果。
+
+## 开发流程
+
+### 安装依赖
+
+```bash
 yarn install
 ```
 
-### Compiles and hot-reloads for development
-```
+### 启动开发服务器
+
+```bash
 yarn serve
 ```
 
-### Compiles and minifies for production
-```
+开发服务器启动后，可以在浏览器中访问 `http://localhost:8080/` 查看网站。
+
+### 构建生产版本
+
+```bash
 yarn build
 ```
 
-### Lints and fixes files
-```
+构建完成后，生产版本的文件会生成在 `dist/` 目录中。
+
+### 运行ESLint检查
+
+```bash
 yarn lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 如何添加新组件
+
+1. 在 `src/components/` 目录下创建新的Vue组件文件（如 `NewComponent.vue`）
+2. 在组件文件中编写模板、脚本和样式
+3. 在 `App.vue` 中导入并使用新组件
+
+```vue
+<!-- App.vue -->
+<template>
+  <div class="app">
+    <!-- 其他组件 -->
+    <NewComponent />
+    <!-- 其他组件 -->
+  </div>
+</template>
+
+<script setup>
+import NewComponent from './components/NewComponent.vue'
+// 其他导入
+</script>
+```
+
+## 如何修改样式
+
+### 修改主题色
+
+在 `src/assets/styles/global.css` 文件中修改CSS变量的值：
+
+```css
+:root {
+  /* 修改主题色 */
+  --primary-color: #6366f1;
+  --secondary-color: #3b82f6;
+  /* 其他变量 */
+}
+```
+
+### 修改组件样式
+
+每个组件都有自己的scoped CSS样式，可以直接在组件文件中修改：
+
+```vue
+<!-- Component.vue -->
+<style scoped>
+/* 修改组件样式 */
+.component-class {
+  color: var(--primary-color);
+  /* 其他样式 */
+}
+</style>
+```
+
+## 部署流程
+
+1. 构建生产版本：`yarn build`
+2. 将 `dist/` 目录中的文件部署到Web服务器
+3. 配置域名和HTTPS（如果需要）
+
+## 注意事项
+
+1. **组件命名**：组件名称使用PascalCase（如 `Navbar.vue`）
+2. **样式隔离**：组件样式使用scoped CSS，避免样式冲突
+3. **响应式设计**：在开发新组件时，要考虑不同屏幕尺寸的适配
+4. **CSS变量**：尽量使用CSS变量，避免硬编码颜色和尺寸
+5. **性能优化**：图片资源要适当压缩，避免过大的文件尺寸
+6. **代码规范**：遵循ESLint规则，保持代码风格一致
