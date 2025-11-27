@@ -38,7 +38,7 @@
           
           <!-- 主截图容器 -->
           <div class="editor-screenshot">
-            <img src="../assets/images/editor.svg" alt="编辑器设计图">
+            <img src="../assets/images/editor.svg" alt="炼丹蓝图编辑器界面 - 可视化AI架构设计">
           </div>
         </div>
       </div>

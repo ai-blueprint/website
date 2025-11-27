@@ -5,7 +5,7 @@
         <div class="footer-section logo-section">
           <div class="footer-logo">
             <div class="logo-icon">
-              <img src="../assets/images/logo.svg" alt="Logo"/>
+              <img src="../assets/images/logo.svg" alt="炼丹蓝图LOGO - AI架构设计工具"/>
             </div>
             <span class="logo-text">炼丹蓝图</span>
           </div>
