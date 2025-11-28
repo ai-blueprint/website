@@ -1,0 +1,8 @@
+stages: [test]
+
+check-runner:
+  stage: test
+  tags: [windows]  # 必须加，不然runner不理你
+  script:
+    - echo "Runner正常"
+    - whoami  # 看runner用哪个用户执行
