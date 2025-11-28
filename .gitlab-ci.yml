@@ -30,6 +30,7 @@ deploy-job:
       # 定义变量
       $cred = New-Object Net.NetworkCredential($env:FTP_USER,$env:FTP_PASS)
       $ftp = "ftp://$($env:FTP_HOST)"
+      $basePath = "ftp://$($env:FTP_HOST)/www/wwwroot/aib"
       $tempDir = "website_temp"
       $targetDir = "website"
       
@@ -38,6 +39,7 @@ deploy-job:
         $r = [Net.FtpWebRequest]::Create("$ftp/$tempDir")
         $r.Method = [Net.WebRequestMethods+Ftp]::MakeDirectory
         $r.Credentials = $cred
+        $r.UsePassive = $true
         $r.GetResponse()
         Write-Host "Created temp directory"
       } catch {
@@ -48,7 +50,7 @@ deploy-job:
       # 上传文件到临时目录
       Get-ChildItem website -Recurse | Where-Object { $_.Extension -ne ".map" } | ForEach-Object {
         $relativePath = $_.FullName.Substring((Get-Item website).FullName.Length).Replace('\','/')
-        $remotePath = "$ftp/$tempDir$relativePath"
+        $remotePath = "$basePath/$tempDir$relativePath"
         
         if ($_.PSIsContainer) {
           try {
