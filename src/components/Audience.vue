@@ -40,7 +40,7 @@
               </li>
               <li class="list-item">
                 <Icon class="list-icon" />
-                无需手动调整维度对齐
+                自动维度对齐与提示
               </li>
             </ul>
           </div>

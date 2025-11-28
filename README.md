@@ -150,7 +150,7 @@ import NewComponent from './components/NewComponent.vue'
 ## 部署流程
 
 1. 构建生产版本：`yarn build`
-2. 将 `dist/` 目录中的文件部署到Web服务器
+2. 将 `website/` 目录中的文件部署到Web服务器
 3. 配置域名和HTTPS（如果需要）
 
 ## 注意事项

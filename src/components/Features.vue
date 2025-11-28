@@ -29,7 +29,7 @@
           </div>
           <h3 class="card-title">丰富的 AI 组件库</h3>
           <p class="card-description">
-            内置数百种主流层（RWKV, LSTM, Transformer Block等），即拖即用。支持自定义封装模块，复用你的独家“丹方”。
+            内置数百种 AI 底层计算组件，即拖即用。支持自定义封装模块，复用你的独家“丹方”。
           </p>
         </div>
 
@@ -40,19 +40,17 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
             </svg>
           </div>
-          <h3 class="card-title">一键生成 PyTorch</h3>
+          <h3 class="card-title">实时数据展示</h3>
           <p class="card-description">
-            所见即所得。设计完成后，自动导出标准、干净的 Python 代码。从架构验证到工程落地，无缝衔接。
+            实时计算多样数据在您设计的架构下的流通情况，自动发现问题，可单独查看某个节点的输出数据并可视化展示。
           </p>
         </div>
+        
       </div>
     </div>
   </section>
 </template>
 
-<script setup>
-// 组合式 API 逻辑
-</script>
 
 <style scoped>
 .features {

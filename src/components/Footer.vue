@@ -10,15 +10,16 @@
             <span class="logo-text">炼丹蓝图</span>
           </div>
           <p class="logo-description">
-            致力于降低 AI 架构创新门槛，让每个人都能成为架构师。
+            致力于降低 AI 架构创新门槛，<br class="desktop-only">
+            让每个人都能成为 AI 架构师。
           </p>
         </div>
 
         <div class="footer-section">
           <h4 class="section-title">产品</h4>
           <ul class="section-list">
-            <li><a href="#" class="list-item">组件市场</a></li>
-            <li><a href="#" class="list-item">更新日志</a></li>
+            <li><a href="#" class="list-item">开放社区</a></li>
+            <li><a href="#" class="list-item">架构擂台</a></li>
           </ul>
         </div>
 
@@ -26,15 +27,15 @@
           <h4 class="section-title">资源</h4>
           <ul class="section-list">
             <li><a href="#" class="list-item">官方文档</a></li>
-            <li><a href="#" class="list-item">示例教程</a></li>
+            <li><a href="#" class="list-item">组件市场</a></li>
           </ul>
         </div>
 
         <div class="footer-section">
           <h4 class="section-title">联系</h4>
           <ul class="section-list">
-            <li><a href="#" class="list-item">关于我们</a></li>
-            <li><a href="#" class="list-item">QQ群</a></li>
+            <li><a href="#" class="list-item"> QQ 群</a></li>
+            <li><a href="#" class="list-item">微信群</a></li>
           </ul>
         </div>
       </div>
