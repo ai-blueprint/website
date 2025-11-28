@@ -166,7 +166,7 @@
 }
 
 .hero-title {
-  font-size: 3rem;
+  font-size: 2.9rem;
   font-weight: 800;
   letter-spacing: -0.025em;
   margin-bottom: 1.5rem;
