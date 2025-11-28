@@ -46,7 +46,7 @@ deploy-job:
       }
       
       # 上传文件到临时目录
-      Get-ChildItem website -Recurse | ForEach-Object {
+      Get-ChildItem website -Recurse | Where-Object { $_.Extension -ne ".map" } | ForEach-Object {
         $relativePath = $_.FullName.Substring((Get-Item website).FullName.Length).Replace('\','/')
         $remotePath = "$ftp/$tempDir$relativePath"
         
