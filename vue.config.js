@@ -3,6 +3,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  outputDir: 'website',  // 输出到website文件夹
   configureWebpack: {
     optimization: {
       splitChunks: {

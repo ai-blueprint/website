@@ -1,8 +1,120 @@
-stages: [test]
+stages: [build, deploy]
 
-check-runner:
-  stage: test
-  tags: [windows]  # 必须加，不然runner不理你
+build-job:
+  stage: build
+  tags: [windows]
   script:
-    - echo "Runner正常"
-    - whoami  # 看runner用哪个用户执行
+    - yarn install
+    - yarn build
+  artifacts:
+    paths: [website/]
+    expire_in: 1 hour
+
+deploy-job:
+  stage: deploy
+  tags: [windows]
+  before_script:
+    - |
+      if (-not $env:FTP_HOST -or -not $env:FTP_USER -or -not $env:FTP_PASS) {
+        Write-Error "Missing required FTP environment variables"
+        exit 1
+      }
+  script:
+    - |
+      # 定义变量
+      $cred = New-Object Net.NetworkCredential($env:FTP_USER,$env:FTP_PASS)
+      $ftp = "ftp://$($env:FTP_HOST)"
+      $tempDir = "website_temp"
+      $targetDir = "website"
+      
+      # 创建临时目录
+      try {
+        $r = [Net.FtpWebRequest]::Create("$ftp/$tempDir")
+        $r.Method = [Net.WebRequestMethods+Ftp]::MakeDirectory
+        $r.Credentials = $cred
+        $r.GetResponse()
+        Write-Host "Created temp directory"
+      } catch {
+        Write-Error "Failed to create temp directory: $_"
+        exit 1
+      }
+      
+      # 上传文件到临时目录
+      Get-ChildItem website -Recurse | ForEach-Object {
+        $relativePath = $_.FullName.Substring((Get-Item website).FullName.Length).Replace('\','/')
+        $remotePath = "$ftp/$tempDir$relativePath"
+        
+        if ($_.PSIsContainer) {
+          try {
+            $r = [Net.FtpWebRequest]::Create($remotePath)
+            $r.Method = [Net.WebRequestMethods+Ftp]::MakeDirectory
+            $r.Credentials = $cred
+            $r.GetResponse()
+            Write-Host "Created directory: $relativePath"
+          } catch {
+            Write-Error "Failed to create directory $relativePath : $_"
+            exit 1
+          }
+        } else {
+          # 检查文件大小
+          if ($_.Length -eq 0) {
+            Write-Warning "Skipping empty file: $relativePath"
+            return
+          }
+          
+          try {
+            $r = [Net.FtpWebRequest]::Create($remotePath)
+            $r.Method = [Net.WebRequestMethods+Ftp]::UploadFile
+            $r.Credentials = $cred
+            $bytes = [IO.File]::ReadAllBytes($_.FullName)
+            $s = $r.GetRequestStream()
+            $s.Write($bytes,0,$bytes.Length)
+            $s.Close()
+            $r.GetResponse()
+            Write-Host "Uploaded file: $relativePath"
+          } catch {
+            Write-Error "Failed to upload file $relativePath : $_"
+            exit 1
+          }
+        }
+      }
+      
+      # 原子性替换：先删除旧目录，再重命名临时目录
+      try {
+        $r = [Net.FtpWebRequest]::Create("$ftp/$targetDir")
+        $r.Method = [Net.WebRequestMethods+Ftp]::RemoveDirectory
+        $r.Credentials = $cred
+        $r.GetResponse()
+        Write-Host "Removed old website directory"
+      } catch {
+        Write-Warning "Failed to remove old website directory (might not exist): $_"
+      }
+      
+      try {
+        $r = [Net.FtpWebRequest]::Create("$ftp/$tempDir")
+        $r.Method = [Net.WebRequestMethods+Ftp]::Rename
+        $r.Credentials = $cred
+        $r.RenameTo = $targetDir
+        $r.GetResponse()
+        Write-Host "Successfully renamed temp directory to website"
+      } catch {
+        Write-Error "Failed to rename temp directory: $_"
+        exit 1
+      }
+      
+      # 验证部署
+      try {
+        $r = [Net.FtpWebRequest]::Create("$ftp/$targetDir")
+        $r.Method = [Net.WebRequestMethods+Ftp]::ListDirectory
+        $r.Credentials = $cred
+        $response = $r.GetResponse()
+        $reader = New-Object IO.StreamReader $response.GetResponseStream()
+        $files = $reader.ReadToEnd()
+        $reader.Close()
+        $response.Close()
+        Write-Host "Deployment verification successful. Remote directory contains:"
+        Write-Host $files
+      } catch {
+        Write-Error "Deployment verification failed: $_"
+        exit 1
+      }
