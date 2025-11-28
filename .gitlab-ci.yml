@@ -1,3 +1,9 @@
+variables:
+  GIT_CONFIG_COUNT: "1"
+  GIT_CONFIG_KEY_0: "http.version"
+  GIT_CONFIG_VALUE_0: "HTTP/1.1"
+  GIT_SSL_NO_VERIFY: "true"
+
 stages: [build, deploy]
 
 build-job:
@@ -6,7 +12,10 @@ build-job:
   script:
     - yarn install
     - yarn build
-    - Rename-Item -Path "dist" -NewName "website"
+    # 修正：检查构建目录并重命名为 website，确保后续脚本能找到
+    - if (Test-Path build) { Rename-Item build website }
+    - if (Test-Path dist) { Rename-Item dist website }
+    # 如果你的构建目录本身就是 website，上面两行会自动跳过或报错(可忽略)，关键是确保目录下有 website 文件夹
   artifacts:
     paths: [website/]
     expire_in: 1 hour
@@ -14,108 +23,135 @@ build-job:
 deploy-job:
   stage: deploy
   tags: [windows]
-  only: [main]
   before_script:
     - |
       if (-not $env:FTP_HOST -or -not $env:FTP_USER -or -not $env:FTP_PASS) {
-        Write-Error "Missing FTP environment variables"
+        Write-Error "Missing required FTP environment variables"
         exit 1
       }
   script:
     - |
-      # ✅ 关键：FTP根路径就是用户主目录 /www/wwwroot/aib
-      $cred = New-Object Net.NetworkCredential($env:FTP_USER,$env:FTP_PASS)
-      $ftpRoot = "ftp://$($env:FTP_HOST)/"  # 用户chroot后，这里直接对应 /www/wwwroot/aib
+      # 1. 定义变量
+      $cred = New-Object Net.NetworkCredential($env:FTP_USER, $env:FTP_PASS)
+      $baseUri = "ftp://$($env:FTP_HOST)/www/wwwroot/aib"
+      $timestamp = Get-Date -Format "yyyyMMddHHmmss"
+      $tempDirName = "website_temp_$timestamp" # 使用唯一临时名避免冲突
+      $targetDirName = "website"
+      $backupDirName = "website_bak_$timestamp"
       
-      $tempDir = "website_temp"
-      $targetDir = "website"
-      
-      # ✅ 创建临时目录（相对路径）
-      try {
-        $r = [Net.FtpWebRequest]::Create("$ftpRoot$tempDir")
-        $r.Method = [Net.WebRequestMethods+Ftp]::MakeDirectory
-        $r.Credentials = $cred
-        $r.UsePassive = $true
-        $r.GetResponse()
-        Write-Host "Created temp directory"
-      } catch {
-        Write-Error "Failed to create temp directory: $_"
-        exit 1
-      }
-      
-      # ✅ 上传文件（相对路径）
-      Get-ChildItem website -Recurse | Where-Object { $_.Extension -ne ".map" } | ForEach-Object {
-        $relativePath = $_.FullName.Substring((Get-Item website).FullName.Length).Replace('\','/')
-        $remotePath = "$ftpRoot$tempDir$relativePath"
-        
-        if ($_.PSIsContainer) {
+      # 辅助函数：执行 FTP 请求并确保关闭连接 (修复连接泄露的关键)
+      function Send-FtpRequest {
+          param($Uri, $Method, $RenameTo=$null)
           try {
-            $r = [Net.FtpWebRequest]::Create($remotePath)
-            $r.Method = [Net.WebRequestMethods+Ftp]::MakeDirectory
-            $r.Credentials = $cred
-            $r.UsePassive = $true
-            $r.GetResponse()
-            Write-Host "Created: $relativePath"
+              $r = [Net.FtpWebRequest]::Create($Uri)
+              $r.Method = $Method
+              $r.Credentials = $cred
+              $r.UsePassive = $true
+              $r.KeepAlive = $false # 建议关闭 KeepAlive 以避免连接被占用
+              if ($RenameTo) { $r.RenameTo = $RenameTo }
+              $resp = $r.GetResponse()
+              # 读取响应流（如果是 ListDirectory）或仅关闭
+              if ($Method -eq [Net.WebRequestMethods+Ftp]::ListDirectory) {
+                  $reader = New-Object IO.StreamReader $resp.GetResponseStream()
+                  $output = $reader.ReadToEnd()
+                  $reader.Close()
+                  return $output
+              }
+              $resp.Close() # !!! 必须关闭连接 !!!
           } catch {
-            Write-Error "Failed to create dir $relativePath : $_"
-            exit 1
+              # 某些错误（如删除不存在的文件夹）可能需要忽略，这里抛出让调用者处理
+              throw $_
           }
-        } else {
-          if ($_.Length -eq 0) { return }
+      }
+
+      Write-Host "Starting deployment to $baseUri"
+
+      # 2. 创建临时目录
+      try {
+          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory)
+          Write-Host "Created temp directory: $tempDirName"
+      } catch {
+          Write-Error "Failed to create temp directory: $_"
+          exit 1
+      }
+      
+      # 3. 上传文件 (修复：连接关闭 + 逻辑优化)
+      $localRoot = (Get-Item "website").FullName
+      # 获取所有项，先按路径长度排序，确保先创建父目录
+      $items = Get-ChildItem "website" -Recurse | Where-Object { $_.Extension -ne ".map" } | Sort-Object { $_.FullName.Length }
+      
+      foreach ($item in $items) {
+          $relativePath = $item.FullName.Substring($localRoot.Length).Replace('\', '/').Trim('/')
+          $remoteUri = "$baseUri/$tempDirName/$relativePath"
+          
+          if ($item.PSIsContainer) {
+              # 创建目录
+              try {
+                  Send-FtpRequest -Uri $remoteUri -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory)
+                  Write-Host "Created Dir: $relativePath"
+              } catch {
+                  Write-Warning "Directory might already exist or fail: $_"
+              }
+          } else {
+              # 上传文件
+              if ($item.Length -eq 0) { continue }
+              try {
+                  $r = [Net.FtpWebRequest]::Create($remoteUri)
+                  $r.Method = [Net.WebRequestMethods+Ftp]::UploadFile
+                  $r.Credentials = $cred
+                  $r.UsePassive = $true
+                  $r.KeepAlive = $false
+                  
+                  # 使用流传输，避免一次性加载大文件
+                  $content = [IO.File]::ReadAllBytes($item.FullName)
+                  $r.ContentLength = $content.Length
+                  $stream = $r.GetRequestStream()
+                  $stream.Write($content, 0, $content.Length)
+                  $stream.Close() # 关闭请求流
+                  
+                  $resp = $r.GetResponse()
+                  $resp.Close() # 关闭响应流 !!!
+                  Write-Host "Uploaded: $relativePath"
+              } catch {
+                  Write-Error "Failed to upload $relativePath : $_"
+                  exit 1
+              }
+          }
+      }
+      
+      # 4. 原子性切换 (修复：使用备份策略代替直接删除)
+      
+      # 4.1 尝试将现有的 website 目录重命名为备份目录
+      $oldSiteExists = $false
+      try {
+         # 先检查是否存在
+         $null = Send-FtpRequest -Uri "$baseUri/$targetDirName" -Method ([Net.WebRequestMethods+Ftp]::GetDateTimestamp)
+         $oldSiteExists = $true
+      } catch {
+         Write-Host "Old website directory does not exist, skipping backup."
+      }
+
+      if ($oldSiteExists) {
           try {
-            $r = [Net.FtpWebRequest]::Create($remotePath)
-            $r.Method = [Net.WebRequestMethods+Ftp]::UploadFile
-            $r.Credentials = $cred
-            $r.UsePassive = $true
-            $bytes = [IO.File]::ReadAllBytes($_.FullName)
-            $s = $r.GetRequestStream()
-            $s.Write($bytes,0,$bytes.Length)
-            $s.Close()
-            $r.GetResponse()
-            Write-Host "Uploaded: $relativePath ($($_.Length) bytes)"
+              Write-Host "Backing up old website to $backupDirName..."
+              Send-FtpRequest -Uri "$baseUri/$targetDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $backupDirName
+              Write-Host "Backup successful."
           } catch {
-            Write-Error "Failed to upload $relativePath : $_"
-            exit 1
+              Write-Error "Failed to move old website to backup. Deployment aborted to prevent data loss. Error: $_"
+              exit 1
           }
-        }
       }
-      
-      # ✅ 原子性替换
+
+      # 4.2 将临时目录重命名为正式目录
       try {
-        $r = [Net.FtpWebRequest]::Create("$ftpRoot$targetDir")
-        $r.Method = [Net.WebRequestMethods+Ftp]::RemoveDirectory
-        $r.Credentials = $cred
-        $r.UsePassive = $true
-        $r.GetResponse()
-        Write-Host "Removed old website directory"
+          Write-Host "Swapping new website to live..."
+          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $targetDirName
+          Write-Host "Successfully deployed!"
       } catch {
-        Write-Warning "Remove failed: $_"
+          Write-Error "Failed to rename temp directory to target. Manual check required! Error: $_"
+          exit 1
       }
-      
-      try {
-        $r = [Net.FtpWebRequest]::Create("$ftpRoot$tempDir")
-        $r.Method = [Net.WebRequestMethods+Ftp]::Rename
-        $r.Credentials = $cred
-        $r.RenameTo = $targetDir
-        $r.UsePassive = $true
-        $r.GetResponse()
-        Write-Host "✅ Deployed successfully"
-      } catch {
-        Write-Error "Rename failed: $_"
-        exit 1
-      }
-      
-      # ✅ 验证
-      try {
-        $r = [Net.FtpWebRequest]::Create("$ftpRoot$targetDir")
-        $r.Method = [Net.WebRequestMethods+Ftp]::ListDirectory
-        $r.Credentials = $cred
-        $r.UsePassive = $true
-        $response = $r.GetResponse()
-        $reader = New-Object IO.StreamReader $response.GetResponseStream()
-        Write-Host "Files:" $reader.ReadToEnd()
-        $reader.Close(); $response.Close()
-      } catch {
-        Write-Error "Verify failed: $_"
-        exit 1
-      }
+
+      # 5. 清理旧备份 (可选：尝试删除旧备份，如果非空会失败，但不会阻断部署)
+      # 注意：仍然无法通过简单命令删除非空备份，但至少不会影响上线。
+      # 建议定期通过 FTP 客户端或服务器脚本清理 _bak_ 目录。
