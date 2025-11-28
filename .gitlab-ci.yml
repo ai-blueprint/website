@@ -31,127 +31,118 @@ deploy-job:
       }
   script:
     - |
-      # === 配置部分 ===
+      # === 1. 配置 ===
       $cred = New-Object Net.NetworkCredential($env:FTP_USER, $env:FTP_PASS)
       
-      # 注意：如果你的 FTP 用户登录进去直接就是 /www/wwwroot/aib，请把下面改成 ftp://$($env:FTP_HOST)
-      $baseUri = "ftp://$($env:FTP_HOST)/www/wwwroot/aib" 
+      # 确保 host 末尾没有 /，确保 base path 格式正确
+      $hostUrl = $env:FTP_HOST.TrimEnd('/')
+      # 请根据实际情况调整下面的路径，例如 "ftp://$hostUrl/www/wwwroot/aib"
+      $baseUri = "ftp://$hostUrl/www/wwwroot/aib" 
       
       $tempDirName = "website_temp"
       $targetDirName = "website"
-      $backupDirName = "website_bak" # 简单的备份名，覆盖式备份
+      $backupDirName = "website_bak"
+      $localDistPath = (Get-Item "website").FullName
 
-      # === 核心函数：发送 FTP 请求 (带重试和资源释放) ===
+      # 辅助函数
       function Send-FtpRequest {
-          param($Uri, $Method, $RenameTo=$null, $IgnoreError550=$false)
+          param($Uri, $Method, $RenameTo=$null, $IsUpload=$false, $FilePath=$null)
           try {
               $r = [Net.FtpWebRequest]::Create($Uri)
               $r.Method = $Method
               $r.Credentials = $cred
               $r.UsePassive = $true
               $r.KeepAlive = $false
+              $r.UseBinary = $true # 强制二进制，防止文件损坏
+              
               if ($RenameTo) { $r.RenameTo = $RenameTo }
+              
+              if ($IsUpload -and $FilePath) {
+                  $bytes = [IO.File]::ReadAllBytes($FilePath)
+                  $r.ContentLength = $bytes.Length
+                  $s = $r.GetRequestStream()
+                  $s.Write($bytes, 0, $bytes.Length)
+                  $s.Close()
+              }
+              
               $resp = $r.GetResponse()
-              $resp.Close() # 关键：立即释放连接
+              $resp.Close()
               return $true
           } catch {
+              # 捕获 550 错误 (文件不可用/已存在)
               $ex = $_.Exception
-              if ($ex.InnerException) { $ex = $ex.InnerException }
+              while ($ex.InnerException) { $ex = $ex.InnerException }
               $respObj = $ex.Response
-              
-              # 处理 550 错误 (文件/目录不存在 或 已存在)
-              if ($respObj -and $respObj.StatusCode -eq [Net.FtpStatusCode]::ActionNotTakenFileUnavailable) { # Code 550
-                  if ($respObj) { $respObj.Close() }
-                  if ($IgnoreError550) { 
-                      Write-Warning "Ignored 550 error for $Uri (Target might not exist or already exists)"
-                      return $false 
-                  }
+              if ($respObj -and $respObj.StatusCode -eq [Net.FtpStatusCode]::ActionNotTakenFileUnavailable) {
+                  $respObj.Close()
+                  return "Ignored550"
               }
               if ($respObj) { $respObj.Close() }
               throw $_
           }
       }
 
-      Write-Host "Starting deployment..."
+      Write-Host "Deploying to $baseUri"
 
-      # 1. 【关键修复】清理上次失败遗留的 temp 目录
-      Write-Host "Cleaning up leftover temp directory..."
-      try {
-          # 尝试删除目录 (如果是文件用 DeleteFile，目录用 RemoveDirectory)
-          # 这里先假设它是目录。如果之前上传了一半，递归删除很难，这里尝试直接改名移走或删除
-          # 最稳妥的方式：尝试重命名为一个垃圾目录以后手动清，或者尝试 RemoveDirectory
-          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::RemoveDirectory) -IgnoreError550 $true
-          Write-Host "Cleanup done (or dir didn't exist)."
-      } catch {
-          Write-Warning "Could not remove temp dir (it might contain files or not exist). Trying to proceed..."
-      }
+      # === 2. 清理 & 初始化临时目录 ===
+      Write-Host "Resetting temp directory..."
+      # 尝试删除旧 temp (如果存在)
+      $null = Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::RemoveDirectory)
+      # 创建新 temp
+      $res = Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory)
+      if ($res -eq "Ignored550") { Write-Warning "Temp dir already exists, proceeding..." }
 
-      # 2. 创建临时目录 (容错：如果已存在，则忽略错误继续)
-      Write-Host "Creating temp directory..."
-      try {
-          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory)
-      } catch {
-          # 如果创建失败，可能是目录已存在(且非空导致没删掉)，这里假设它存在并继续
-          Write-Warning "MakeDirectory failed (Error 550 usually means it already exists). Proceeding..."
-      }
-
-      # 3. 上传文件
-      $localRoot = (Get-Item "website").FullName
-      # 排序：先长后短是错的，应该是先短后长(先创建根目录)，但 Get-ChildItem 默认顺序通常可以
-      # 显式按路径长度排序，确保父目录先被处理
-      $items = Get-ChildItem "website" -Recurse | Where-Object { $_.Extension -ne ".map" } | Sort-Object { $_.FullName.Length }
-
-      foreach ($item in $items) {
-          $relativePath = $item.FullName.Substring($localRoot.Length).Replace('\', '/').Trim('/')
+      # === 3. 第一步：先创建所有文件夹结构 (关键修复) ===
+      Write-Host "Phase 1: Creating directory structure..."
+      $directories = Get-ChildItem -Path $localDistPath -Recurse -Directory | Sort-Object { $_.FullName.Length }
+      
+      foreach ($dir in $directories) {
+          # 计算相对路径，例如 /assets/img
+          $relativePath = $dir.FullName.Substring($localDistPath.Length).Replace('\', '/').Trim('/')
+          if ([string]::IsNullOrWhiteSpace($relativePath)) { continue }
+          
           $remoteUri = "$baseUri/$tempDirName/$relativePath"
           
-          if ($item.PSIsContainer) {
-              # 创建子目录，忽略 "已存在" 错误
-              Send-FtpRequest -Uri $remoteUri -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory) -IgnoreError550 $true | Out-Null
-          } else {
-              if ($item.Length -eq 0) { continue }
-              # 上传文件
-              try {
-                  $r = [Net.FtpWebRequest]::Create($remoteUri)
-                  $r.Method = [Net.WebRequestMethods+Ftp]::UploadFile
-                  $r.Credentials = $cred
-                  $r.UsePassive = $true
-                  $r.KeepAlive = $false
-                  $bytes = [IO.File]::ReadAllBytes($item.FullName)
-                  $r.ContentLength = $bytes.Length
-                  $s = $r.GetRequestStream()
-                  $s.Write($bytes, 0, $bytes.Length)
-                  $s.Close()
-                  $resp = $r.GetResponse()
-                  $resp.Close()
-                  Write-Host "Uploaded: $relativePath"
-              } catch {
-                  Write-Error "Failed to upload $relativePath : $_"
-                  exit 1
-              }
+          try {
+              $res = Send-FtpRequest -Uri $remoteUri -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory)
+              if ($res -ne "Ignored550") { Write-Host "Created Dir: $relativePath" }
+          } catch {
+              Write-Error "Failed to create directory $relativePath. Stopping."
+              exit 1
           }
       }
 
-      # 4. 原子性切换
-      Write-Host "Swapping directories..."
-
-      # 4.1 删除旧的备份 (如果存在)
-      Send-FtpRequest -Uri "$baseUri/$backupDirName" -Method ([Net.WebRequestMethods+Ftp]::RemoveDirectory) -IgnoreError550 $true
-
-      # 4.2 把现有的 website 改名为 backup (如果存在)
-      # 如果 website 不存在(第一次部署)，这一步会报 550，我们需要忽略
-      try {
-          Send-FtpRequest -Uri "$baseUri/$targetDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $backupDirName
-          Write-Host "Backed up current website."
-      } catch {
-           Write-Warning "Could not backup current website (maybe it doesn't exist yet). Error: $_"
+      # === 4. 第二步：上传所有文件 ===
+      Write-Host "Phase 2: Uploading files..."
+      $files = Get-ChildItem -Path $localDistPath -Recurse -File | Where-Object { $_.Extension -ne ".map" }
+      
+      foreach ($file in $files) {
+          $relativePath = $file.FullName.Substring($localDistPath.Length).Replace('\', '/').Trim('/')
+          $remoteUri = "$baseUri/$tempDirName/$relativePath"
+          
+          try {
+              Send-FtpRequest -Uri $remoteUri -Method ([Net.WebRequestMethods+Ftp]::UploadFile) -IsUpload $true -FilePath $file.FullName | Out-Null
+              Write-Host "Uploaded: $relativePath"
+          } catch {
+              Write-Error "Failed to upload $relativePath : $_"
+              exit 1
+          }
       }
 
-      # 4.3 把 temp 改名为 website
+      # === 5. 切换目录 (上线) ===
+      Write-Host "Phase 3: Going Live..."
+      
+      # 删除旧备份
+      $null = Send-FtpRequest -Uri "$baseUri/$backupDirName" -Method ([Net.WebRequestMethods+Ftp]::RemoveDirectory)
+      
+      # 备份当前网站
+      $null = Send-FtpRequest -Uri "$baseUri/$targetDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $backupDirName
+      
+      # 启用新网站
       try {
-          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $targetDirName
-          Write-Host "Deployment Successful!"
+          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $targetDirName | Out-Null
+          Write-Host "SUCCESS: Deployment complete."
       } catch {
-          Write-Error "Critical Error: Failed to activate new website. Please check server. $_"
+          Write-Error "FATAL: Failed to rename temp directory to live. Check server."
           exit 1
       }
