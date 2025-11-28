@@ -29,14 +29,13 @@ deploy-job:
     - |
       # 定义变量
       $cred = New-Object Net.NetworkCredential($env:FTP_USER,$env:FTP_PASS)
-      $ftp = "ftp://$($env:FTP_HOST)"
       $basePath = "ftp://$($env:FTP_HOST)/www/wwwroot/aib"
       $tempDir = "website_temp"
       $targetDir = "website"
       
       # 创建临时目录
       try {
-        $r = [Net.FtpWebRequest]::Create("$ftp/$tempDir")
+        $r = [Net.FtpWebRequest]::Create("$basePath/$tempDir")
         $r.Method = [Net.WebRequestMethods+Ftp]::MakeDirectory
         $r.Credentials = $cred
         $r.UsePassive = $true
@@ -89,7 +88,7 @@ deploy-job:
       
       # 原子性替换：先删除旧目录，再重命名临时目录
       try {
-        $r = [Net.FtpWebRequest]::Create("$ftp/$targetDir")
+        $r = [Net.FtpWebRequest]::Create("$basePath/$targetDir")
         $r.Method = [Net.WebRequestMethods+Ftp]::RemoveDirectory
         $r.Credentials = $cred
         $r.GetResponse()
@@ -99,7 +98,7 @@ deploy-job:
       }
       
       try {
-        $r = [Net.FtpWebRequest]::Create("$ftp/$tempDir")
+        $r = [Net.FtpWebRequest]::Create("$basePath/$tempDir")
         $r.Method = [Net.WebRequestMethods+Ftp]::Rename
         $r.Credentials = $cred
         $r.RenameTo = $targetDir
@@ -112,7 +111,7 @@ deploy-job:
       
       # 验证部署
       try {
-        $r = [Net.FtpWebRequest]::Create("$ftp/$targetDir")
+        $r = [Net.FtpWebRequest]::Create("$basePath/$targetDir")
         $r.Method = [Net.WebRequestMethods+Ftp]::ListDirectory
         $r.Credentials = $cred
         $response = $r.GetResponse()
