@@ -3,39 +3,42 @@
     <!-- 顶部背景光晕 -->
     <div class="blob blob-blue" aria-hidden="true"></div>
     <div class="blob blob-purple" aria-hidden="true"></div>
-    
+
     <div class="container">
       <div class="hero-content">
         <div class="hero-badge" role="status" aria-live="polite">
           <span class="badge-indicator"></span>
           内测阶段即将开始！
         </div>
-        
+
         <h1 class="hero-title">
-          AI 架构设计<br>
+          AI 架构设计<br />
           <span class="gradient-text">从未如此优雅简单</span>
         </h1>
-        
+
         <p class="hero-description">
-          用蓝图的形式设计AI架构。拖拽节点、连线，<br class="desktop-only">
+          用蓝图的形式设计AI架构。拖拽节点、连线，<br class="desktop-only" />
           让灵感在"炼丹蓝图"中瞬间转化为可运行的模型代码。
         </p>
 
         <!-- 编辑器界面展示 -->
-        <article class="editor-container float-animation" aria-label="编辑器预览">
+        <article
+          class="editor-container float-animation"
+          aria-label="编辑器预览"
+        >
           <!-- 装饰性背景块 -->
           <div class="editor-background" aria-hidden="true"></div>
-          
+
           <!-- 主截图容器 -->
           <div class="editor-screenshot">
             <img
               src="../assets/images/editor.svg"
               alt="炼丹蓝图编辑器界面预览：展示AI架构可视化设计工具"
-              width="800"
-              height="600"
+              width="100%"
+              height="100%"
               loading="eager"
               fetchpriority="high"
-            >
+            />
           </div>
         </article>
       </div>
@@ -129,7 +132,7 @@
 }
 
 .badge-indicator::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -141,7 +144,7 @@
 }
 
 .badge-indicator::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -152,7 +155,8 @@
 }
 
 @keyframes ping {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -183,7 +187,11 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-purple) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color) 0%,
+    var(--accent-purple) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -245,14 +253,19 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-purple) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color) 0%,
+    var(--accent-purple) 100%
+  );
   color: var(--white);
   box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.15);
 }
 
 .btn-primary:hover {
   transform: scale(1.05);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .btn-secondary {
@@ -292,7 +305,11 @@
 .editor-background {
   position: absolute;
   inset: -0.25rem;
-  background: linear-gradient(135deg, var(--blue-400) 0%, var(--purple-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--blue-400) 0%,
+    var(--purple-400) 100%
+  );
   border-radius: 1.5rem;
   opacity: 0.2;
   filter: blur(1rem);
@@ -420,7 +437,8 @@
   height: 6rem;
   background-color: var(--white);
   border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -497,7 +515,8 @@
   background-color: rgba(255, 255, 255, 0.9);
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--slate-500);
