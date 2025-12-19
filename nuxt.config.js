@@ -132,6 +132,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       routes: ["/", "/sitemap.xml", "/robots.txt"],
+      failOnError: false, // 允许404页面不中断构建
     },
   },
 
