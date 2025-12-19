@@ -1,9 +1,11 @@
 <template>
   <div class="home-page">
+    <Navbar />
     <Hero />
     <Features />
     <Audience />
     <Cta />
+    <Footer />
   </div>
 </template>
 

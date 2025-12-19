@@ -3,37 +3,40 @@
     <!-- 顶部背景光晕 -->
     <div class="blob blob-blue" aria-hidden="true"></div>
     <div class="blob blob-purple" aria-hidden="true"></div>
-    
+
     <div class="container">
       <div class="hero-content">
         <div class="hero-badge" role="status" aria-live="polite">
           <span class="badge-indicator"></span>
           内测阶段即将开始！
         </div>
-        
+
         <h1 class="hero-title">
-          AI 架构设计<br>
+          AI 架构设计<br />
           <span class="gradient-text">从未如此优雅简单</span>
         </h1>
-        
+
         <p class="hero-description">
-          用蓝图的形式设计AI架构。拖拽节点、连线，<br class="desktop-only">
+          用蓝图的形式设计AI架构。拖拽节点、连线，<br class="desktop-only" />
           让灵感在"炼丹蓝图"中瞬间转化为可运行的模型代码。
         </p>
 
         <!-- 编辑器界面展示 -->
-        <article class="editor-container float-animation" aria-label="编辑器预览">
+        <article
+          class="editor-container float-animation"
+          aria-label="编辑器预览"
+        >
           <!-- 装饰性背景块 -->
           <div class="editor-background" aria-hidden="true"></div>
-          
+
           <!-- 主截图容器 -->
-          <div class="editor-screenshot">
+          <!-- 111 -->
+          <div class="editor-screenshot" width="100%" height="100%">
             <NuxtImg
               src="/images/editor.svg"
               alt="炼丹蓝图编辑器界面预览：展示AI架构可视化设计工具"
-              width="800"
-              height="600"
-              loading="lazy"
+              width="100%"
+              height="100%"
               fetchpriority="high"
             />
           </div>
@@ -129,7 +132,7 @@
 }
 
 .badge-indicator::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -141,7 +144,7 @@
 }
 
 .badge-indicator::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -152,7 +155,8 @@
 }
 
 @keyframes ping {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -183,7 +187,11 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-purple) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color) 0%,
+    var(--accent-purple) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -237,7 +245,11 @@
 .editor-background {
   position: absolute;
   inset: -0.25rem;
-  background: linear-gradient(135deg, var(--blue-400) 0%, var(--purple-400) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--blue-400) 0%,
+    var(--purple-400) 100%
+  );
   border-radius: 1.5rem;
   opacity: 0.2;
   filter: blur(1rem);
