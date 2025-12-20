@@ -23,6 +23,8 @@ build-job:
 deploy-job:
   stage: deploy
   tags: [windows]
+  dependencies:
+    - build-job
   before_script:
     - |
       if (-not $env:FTP_HOST -or -not $env:FTP_USER -or -not $env:FTP_PASS) {
@@ -30,71 +32,106 @@ deploy-job:
         exit 1
       }
   script:
-    - |  
-      function Add-FtpFile {  
-        param($ftpFilePath, $localFile, $username, $password) {  
-          try {
-            Write-Host "Uploading: $localFile to $ftpFilePath"
-            $ftprequest = [System.Net.FtpWebRequest]::Create($ftpFilePath)  
-            $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)  
-            $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile  
-            $content = [System.IO.File]::ReadAllBytes($localFile)  
-            $ftprequest.ContentLength = $content.Length  
-            $rs = $ftprequest.GetRequestStream()  
-            $rs.Write($content, 0, $content.Length)  
-            $rs.Close()  
-            $rs.Dispose()
-            Write-Host "Successfully uploaded: $ftpFilePath"
-          }
-          catch {
-            Write-Error "Failed to upload $localFile : $_"
-            exit 1
-          }
-        }  
-      }  
+    - |
+      function Add-FtpFile {
+        param(
+          [string]$ftpFilePath,
+          [string]$localFile,
+          [string]$username,
+          [string]$password
+        )
+        try {
+          Write-Host "Uploading: $localFile to $ftpFilePath"
+          $ftprequest = [System.Net.FtpWebRequest]::Create($ftpFilePath)
+          $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)
+          $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+          $ftprequest.UseBinary = $true
+          $ftprequest.UsePassive = $true
+          $content = [System.IO.File]::ReadAllBytes($localFile)
+          $ftprequest.ContentLength = $content.Length
+          $rs = $ftprequest.GetRequestStream()
+          $rs.Write($content, 0, $content.Length)
+          $rs.Close()
+          $rs.Dispose()
+          Write-Host "Successfully uploaded: $ftpFilePath"
+        }
+        catch {
+          Write-Error "Failed to upload $localFile : $_"
+          Write-Error "Exception details: $($_.Exception.Message)"
+          exit 1
+        }
+      }
 
-      function Add-FtpDirectory {  
-        param($ftpPath, $username, $password) {  
-          try {
-            Write-Host "Creating directory: $ftpPath"
-            $ftprequest = [System.Net.FtpWebRequest]::Create($ftpPath)  
-            $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)  
-            $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory  
-            $response = $ftprequest.GetResponse()
-            $response.Close()
-            Write-Host "Successfully created directory: $ftpPath"
-          } catch {
-            # Directory already exists or other error
-            Write-Host "Directory creation status: $ftpPath - $_"
-          }
-        }  
-      }  
+      function Add-FtpDirectory {
+        param(
+          [string]$ftpPath,
+          [string]$username,
+          [string]$password
+        )
+        try {
+          Write-Host "Creating directory: $ftpPath"
+          $ftprequest = [System.Net.FtpWebRequest]::Create($ftpPath)
+          $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)
+          $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+          $response = $ftprequest.GetResponse()
+          $response.Close()
+          Write-Host "Successfully created directory: $ftpPath"
+        }
+        catch {
+          Write-Host "Directory creation status: $ftpPath - $($_.Exception.Message)"
+        }
+      }
 
-      function Add-FtpFolderWithFiles {  
-        param($sourceFolder, $destinationFolder, $username, $password) {  
-          Write-Host "Processing folder: $sourceFolder"
-          Add-FtpDirectory $destinationFolder $username $password  
-          $files = Get-ChildItem $sourceFolder -File  
-          foreach($file in $files) {  
-            $uploadUrl = "$destinationFolder/$($file.Name)"  
-            Add-FtpFile $uploadUrl $file.FullName $username $password  
-          }  
-        }  
-      }  
+      function Add-FtpFolderWithFilesRecursive {
+        param(
+          [string]$sourceFolder,
+          [string]$destinationFolder,
+          [string]$username,
+          [string]$password
+        )
+        Write-Host "Starting recursive upload from: $sourceFolder to $destinationFolder"
+        
+        # 确保源文件夹存在
+        if (-not (Test-Path $sourceFolder)) {
+          Write-Error "Source folder does not exist: $sourceFolder"
+          exit 1
+        }
 
-      function Add-FtpFolderWithFilesRecursive {  
-        param($sourceFolder, $destinationFolder, $username, $password) {  
-          Write-Host "Starting recursive upload from: $sourceFolder"
-          Add-FtpFolderWithFiles $sourceFolder $destinationFolder $username $password  
-          $subDirs = Get-ChildItem $sourceFolder -Directory  
-          foreach($subDir in $subDirs) {  
-            $destPath = "$destinationFolder/$($subDir.Name)"
-            Add-FtpFolderWithFilesRecursive $subDir.FullName $destPath $username $password  
-          }  
-        }  
-      }  
+        # 创建目标目录
+        Add-FtpDirectory $destinationFolder $username $password
+
+        # 上传文件
+        $files = Get-ChildItem $sourceFolder -File
+        foreach($file in $files) {
+          $remotePath = "$destinationFolder/$($file.Name)"
+          Add-FtpFile $remotePath $file.FullName $username $password
+        }
+
+        # 递归处理子目录
+        $subDirs = Get-ChildItem $sourceFolder -Directory
+        foreach($subDir in $subDirs) {
+          $remotePath = "$destinationFolder/$($subDir.Name)"
+          Add-FtpFolderWithFilesRecursive $subDir.FullName $remotePath $username $password
+        }
+      }
+
+      # 获取当前工作目录的绝对路径
+      $currentPath = Get-Location
+      $sourcePath = Join-Path $currentPath "website"
+      Write-Host "Source path: $sourcePath"
+      Write-Host "Source path exists: $(Test-Path $sourcePath)"
+
+      # 确保website目录存在
+      if (-not (Test-Path $sourcePath)) {
+        Write-Error "Website directory not found at: $sourcePath"
+        exit 1
+      }
+
+      # 显示website目录内容
+      Write-Host "Website directory contents:"
+      Get-ChildItem $sourcePath | ForEach-Object { Write-Host "  $($_.Name)" }
 
       $ftpUri = "ftp://$env:FTP_HOST/aib"
       Write-Host "Starting FTP upload to: $ftpUri"
-      Add-FtpFolderWithFilesRecursive "website/" $ftpUri $env:FTP_USER $env:FTP_PASS
+      Add-FtpFolderWithFilesRecursive $sourcePath $ftpUri $env:FTP_USER $env:FTP_PASS
       Write-Host "FTP upload completed"
