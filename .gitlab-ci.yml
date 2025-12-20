@@ -14,9 +14,9 @@ build-job:
     - yarn generate
     - Write-Host "=== Build Output Diagnostics ==="
     - if (Test-Path .output/public) { Write-Host "[OK] Found .output/public" } else { Write-Host "[ERROR] NOT FOUND .output/public"; exit 1 }
-    - if (Test-Path build) { Write-Host "[INFO] Found build" } else { Write-Host "[INFO] build directory does not exist (expected for Nuxt 3)" }
-    - if (Test-Path dist) { Write-Host "[INFO] Found dist" } else { Write-Host "[INFO] dist directory does not exist (expected for Nuxt 3)" }
-    - if (Test-Path .output/public) { Rename-Item .output/public website; Write-Host "[SUCCESS] Renamed .output/public to website" }
+    - if (Test-Path website) { Remove-Item website -Recurse -Force; Write-Host "[INFO] Removed old website directory" }
+    - Move-Item .output/public website
+    - Write-Host "[SUCCESS] Moved .output/public to website"
     - if (Test-Path website) { Write-Host "[OK] Artifacts directory website is ready" } else { Write-Host "[ERROR] Failed to create website directory"; exit 1 }
     - Get-ChildItem website | Select-Object -First 10 | ForEach-Object { Write-Host "  - $($_.Name)" }
   artifacts:
