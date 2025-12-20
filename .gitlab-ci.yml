@@ -142,7 +142,10 @@ deploy-job:
 
       # === 7. 上传文件 ===
       Write-Host "Step 5: Uploading files..."
-      $files = Get-ChildItem -Path $localDistPath -Recurse -File | Where-Object { $_.Extension -ne ".map" }
+      $files = Get-ChildItem -Path $localDistPath -Recurse -File | Where-Object {
+          $_.Extension -ne ".map" -and $_.Extension -ne ".gz" -and $_.Extension -ne ".br"
+      }
+      Write-Host "Found $($files.Count) files to upload (excluding .map, .gz, .br)"
       foreach ($file in $files) {
           $relativePath = $file.FullName.Substring($localDistPath.Length).Replace('\', '/').Trim('/')
           $remoteUri = "$baseUri/$tempDirName/$relativePath"
