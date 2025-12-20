@@ -12,13 +12,10 @@ build-job:
   script:
     - yarn install
     - yarn generate
-    - Write-Host "=== Build Output Diagnostics ==="
-    - if (Test-Path .output/public) { Write-Host "[OK] Found .output/public" } else { Write-Host "[ERROR] NOT FOUND .output/public"; exit 1 }
-    - if (Test-Path website) { Remove-Item website -Recurse -Force; Write-Host "[INFO] Removed old website directory" }
+    - if (!(Test-Path .output/public)) { Write-Host "[ERROR] .output/public missing"; exit 1 }
+    - if (Test-Path website) { Remove-Item website -Recurse -Force }
     - Move-Item .output/public website
-    - Write-Host "[SUCCESS] Moved .output/public to website"
-    - if (Test-Path website) { Write-Host "[OK] Artifacts directory website is ready" } else { Write-Host "[ERROR] Failed to create website directory"; exit 1 }
-    - Get-ChildItem website | Select-Object -First 10 | ForEach-Object { Write-Host "  - $($_.Name)" }
+    - if (!(Test-Path website)) { Write-Host "[ERROR] website creation failed"; exit 1 }
   artifacts:
     paths: [website/]
     expire_in: 1 hour
@@ -33,196 +30,55 @@ deploy-job:
         exit 1
       }
   script:
-    - |
-      # === 1. 配置 ===
-      $cred = New-Object Net.NetworkCredential($env:FTP_USER, $env:FTP_PASS)
-      $hostUrl = $env:FTP_HOST.TrimEnd('/')
+    - |  
+      function Add-FtpFile {  
+        param($ftpFilePath, $localFile, $username, $password) {  
+          $ftprequest = [System.Net.FtpWebRequest]::Create($ftpFilePath)  
+          $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)  
+          $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile  
+          $content = [System.IO.File]::ReadAllBytes($localFile)  
+          $ftprequest.ContentLength = $content.Length  
+          $rs = $ftprequest.GetRequestStream()  
+          $rs.Write($content, 0, $content.Length)  
+          $rs.Close()  
+          $rs.Dispose()  
+        }  
+      }  
 
-      # --- 尝试修复路径 ---
-      # 建议先试 "/aib"。如果你的服务器结构确实特殊，再改回 "/www/wwwroot/aib"
-      $targetPath = "/aib" 
+      function Add-FtpDirectory {  
+        param($ftpPath, $username, $password) {  
+          $ftprequest = [System.Net.FtpWebRequest]::Create($ftpPath)  
+          $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)  
+          $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory  
+          try { $ftprequest.GetResponse() | Out-Null } catch {}  # 已存在忽略  
+        }  
+      }  
 
-      $baseUri = "ftp://$hostUrl$targetPath"
-      $tempDirName = "website_temp"
-      $targetDirName = "website"
-      $backupDirName = "website_bak"
-      $localDistPath = (Get-Item "website").FullName
+      function Add-FtpFolderWithFiles {  
+        param($sourceFolder, $destinationFolder, $username, $password) {  
+          Add-FtpDirectory $destinationFolder $username $password  
+          $files = Get-ChildItem $sourceFolder -File  
+          foreach($file in $files) {  
+            $uploadUrl = "$destinationFolder/$($file.Name)"  
+            Add-FtpFile $uploadUrl $file.FullName $username $password  
+          }  
+        }  
+      }  
 
-      # === 2. 核心函数 ===
-      function Send-FtpRequest {
-          param($Uri, $Method, $RenameTo=$null, $IsUpload=$false, $FilePath=$null)
-          try {
-              # URL编码特殊字符以避免FTP协议解析问题
-              $encodedUri = $Uri -replace '&', '%26' -replace '=', '%3D'
-              
-              $r = [Net.FtpWebRequest]::Create($encodedUri)
-              $r.Method = $Method
-              $r.Credentials = $cred
-              $r.UsePassive = $true
-              $r.KeepAlive = $false
-              $r.UseBinary = $true
-              if ($RenameTo) { $r.RenameTo = $RenameTo }
-              
-              if ($IsUpload) {
-                  $bytes = [IO.File]::ReadAllBytes($FilePath)
-                  $r.ContentLength = $bytes.Length
-                  $s = $r.GetRequestStream()
-                  try {
-                      $s.Write($bytes, 0, $bytes.Length)
-                      $s.Flush()
-                  } finally {
-                      $s.Close()
-                  }
-              }
-              
-              $resp = $r.GetResponse()
-              
-              # 如果是 ListDirectory 或 ListDirectoryDetails，读取内容
-              if ($Method -eq [Net.WebRequestMethods+Ftp]::ListDirectory -or
-                  $Method -eq [Net.WebRequestMethods+Ftp]::ListDirectoryDetails) {
-                  $reader = New-Object IO.StreamReader $resp.GetResponseStream()
-                  $data = $reader.ReadToEnd()
-                  $reader.Close()
-                  $resp.Close()
-                  return $data
-              }
-              
-              $resp.Close()
-              return $true
-          } catch {
-              throw $_
-          }
-      }
+      function Add-FtpFolderWithFilesRecursive {  
+        param($sourceFolder, $destinationFolder, $username, $password) {  
+          Add-FtpFolderWithFiles $sourceFolder $destinationFolder $username $password  
+          $subDirs = Get-ChildItem $sourceFolder -Directory  
+          $fromUri = New-Object System.Uri($sourceFolder)  
+          foreach($subDir in $subDirs) {  
+            $toUri = New-Object System.Uri($subDir.FullName)  
+            $relativeUrl = $fromUri.MakeRelativeUri($toUri)  
+            $relativePath = [System.Uri]::UnescapeDataString($relativeUrl.ToString())  
+            $lastFolder = $relativePath.Substring($relativePath.LastIndexOf("/") + 1)  
+            Add-FtpFolderWithFilesRecursive $subDir.FullName "$destinationFolder/$lastFolder" $username $password  
+          }  
+        }  
+      }  
 
-      function Ensure-Directory {
-          param($DirUri)
-          try {
-              Write-Host "Creating: $DirUri"
-              Send-FtpRequest -Uri $DirUri -Method ([Net.WebRequestMethods+Ftp]::MakeDirectory) | Out-Null
-          } catch {
-              $ex = $_.Exception
-              while ($ex.InnerException) { $ex = $ex.InnerException }
-              $resp = $ex.Response
-              # 如果是 550 (目录已存在)，忽略错误
-              if ($resp.StatusCode -eq [Net.FtpStatusCode]::ActionNotTakenFileUnavailable) {
-                  $resp.Close()
-                  Write-Host " -> Exists (Ignored 550)"
-              } else {
-                  if ($resp) { $resp.Close() }
-                  Write-Error "Failed to create directory $DirUri : $_"
-                  exit 1
-              }
-          }
-      }
-
-      # === 3. 连通性测试与环境探测 (Debug) ===
-      Write-Host "=== DEBUG INFO ==="
-      try {
-          Write-Host "Listing Root Directory (ftp://$hostUrl/)..."
-          $rootFiles = Send-FtpRequest -Uri "ftp://$hostUrl/" -Method ([Net.WebRequestMethods+Ftp]::ListDirectory)
-          Write-Host "Root contains:"
-          Write-Host $rootFiles
-          Write-Host "------------------"
-      } catch {
-          Write-Warning "Could not list root directory. Proceeding anyway..."
-      }
-
-      # === 4. 确保主项目目录(aib)存在 ===
-      # 这是之前脚本缺失的一步：先创建 aib
-      Write-Host "Step 1: Ensuring base project directory exists..."
-      Ensure-Directory -DirUri $baseUri
-
-      # === 5. 清理与准备 Temp ===
-      Write-Host "Step 2: Cleaning temp..."
-      try { Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::RemoveDirectory) } catch {}
-
-      Write-Host "Step 3: Creating temp root..."
-      Ensure-Directory -DirUri "$baseUri/$tempDirName"
-
-      # === 6. 创建子目录结构 ===
-      Write-Host "Step 4: Creating sub-directories..."
-      $directories = Get-ChildItem -Path $localDistPath -Recurse -Directory | Sort-Object { $_.FullName.Length }
-      foreach ($dir in $directories) {
-          $relativePath = $dir.FullName.Substring($localDistPath.Length).Replace('\', '/').Trim('/')
-          if (-not [string]::IsNullOrWhiteSpace($relativePath)) {
-              Ensure-Directory -DirUri "$baseUri/$tempDirName/$relativePath"
-          }
-      }
-
-      # === 7. 上传文件 ===
-      Write-Host "Step 5: Uploading files..."
-      $files = Get-ChildItem -Path $localDistPath -Recurse -File | Where-Object {
-          $_.Extension -ne ".map" -and $_.Extension -ne ".gz" -and $_.Extension -ne ".br"
-      }
-      Write-Host "Found $($files.Count) files to upload (excluding .map, .gz, .br)"
-      foreach ($file in $files) {
-          $relativePath = $file.FullName.Substring($localDistPath.Length).Replace('\', '/').Trim('/')
-          $remoteUri = "$baseUri/$tempDirName/$relativePath"
-          try {
-              Send-FtpRequest -Uri $remoteUri -Method ([Net.WebRequestMethods+Ftp]::UploadFile) -IsUpload $true -FilePath $file.FullName | Out-Null
-              Write-Host "Uploaded: $relativePath"
-          } catch {
-              Write-Error "Failed to upload $relativePath : $_"
-              exit 1
-          }
-      }
-
-      # === 8. 上线切换 ===
-      Write-Host "Step 6: Going Live..."
-      
-      # 尝试递归删除旧的 website 目录
-      function Remove-FtpDirectory {
-          param($Uri)
-          try {
-              Write-Host "[DEBUG] 正在列出目录内容: $Uri"
-              $files = Send-FtpRequest -Uri $Uri -Method ([Net.WebRequestMethods+Ftp]::ListDirectoryDetails)
-              $lines = $files -split "`n" | Where-Object { $_ -match '\S' }
-              Write-Host "[DEBUG] 找到 $($lines.Count) 个项目"
-              
-              foreach ($line in $lines) {
-                  $parts = $line -split '\s+', 9
-                  $name = $parts[-1]
-                  if ($name -eq '.' -or $name -eq '..') { continue }
-                  
-                  $itemUri = "$Uri/$name"
-                  Write-Host "[DEBUG] 处理项目: $name"
-                  Write-Host "[DEBUG] 原始URI: $itemUri"
-                  
-                  if ($line -match '^d') {
-                      Write-Host "[DEBUG] 这是目录，递归删除..."
-                      Remove-FtpDirectory -Uri $itemUri
-                  } else {
-                      try {
-                          Write-Host "[DEBUG] 删除文件: $name"
-                          Send-FtpRequest -Uri $itemUri -Method ([Net.WebRequestMethods+Ftp]::DeleteFile) | Out-Null
-                          Write-Host "[DEBUG] 文件删除成功: $name"
-                      } catch {
-                          Write-Warning "[DEBUG] 删除文件失败 $name : $_"
-                      }
-                  }
-              }
-              Write-Host "[DEBUG] 删除空目录: $Uri"
-              Send-FtpRequest -Uri $Uri -Method ([Net.WebRequestMethods+Ftp]::RemoveDirectory) | Out-Null
-              Write-Host "[DEBUG] 目录删除成功: $Uri"
-          } catch {
-              Write-Warning "[DEBUG] Remove-FtpDirectory 错误 ($Uri): $_"
-          }
-      }
-      
-      # 删除旧的 website 目录
-      Write-Host "Removing old website directory..."
-      Write-Host "[DEBUG] 目标目录: $baseUri/$targetDirName"
-      Remove-FtpDirectory -Uri "$baseUri/$targetDirName"
-      
-      # 重命名 temp 为 website
-      Write-Host "[DEBUG] 准备重命名: $tempDirName -> $targetDirName"
-      Write-Host "[DEBUG] 源URI: $baseUri/$tempDirName"
-      try {
-          Send-FtpRequest -Uri "$baseUri/$tempDirName" -Method ([Net.WebRequestMethods+Ftp]::Rename) -RenameTo $targetDirName | Out-Null
-          Write-Host "DEPLOYMENT SUCCESSFUL!"
-      } catch {
-          Write-Error "Failed to rename temp directory: $_"
-          Write-Host "[DEBUG] 重命名失败的详细信息: $($_.Exception.Message)"
-          Write-Host "[DEBUG] 完整异常: $($_ | Format-List * | Out-String)"
-          exit 1
-      }
+      $ftpUri = "ftp://$env:FTP_HOST/$env:REMOTE_DIR"  
+      Add-FtpFolderWithFilesRecursive "website/" $ftpUri $env:FTP_USER $env:FTP_PASS
