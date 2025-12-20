@@ -80,5 +80,5 @@ deploy-job:
         }  
       }  
 
-      $ftpUri = "ftp://$env:FTP_HOST/$env:REMOTE_DIR"  
+      $ftpUri = "ftp://$env:FTP_HOST"  
       Add-FtpFolderWithFilesRecursive "website/" $ftpUri $env:FTP_USER $env:FTP_PASS
