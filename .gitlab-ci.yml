@@ -1,137 +1,243 @@
+# GitLab CI/CD 配置文件 - Nuxt.js 静态站点增量部署
+# 优化策略：依赖缓存 + 增量构建 + PowerShell 原生 FTP 增量部署
+
+# ============================================
+# 全局配置
+# ============================================
 variables:
+  # Git 配置（保留现有设置）
   GIT_CONFIG_COUNT: "1"
   GIT_CONFIG_KEY_0: "http.version"
   GIT_CONFIG_VALUE_0: "HTTP/1.1"
   GIT_SSL_NO_VERIFY: "true"
 
-stages: [build, deploy]
+  # FTP 部署配置
+  FTP_REMOTE_PATH: "/aib"
 
-build-job:
-  stage: build
-  tags: [windows]
+  # Node 版本（可选）
+  NODE_VERSION: "18"
+
+# ============================================
+# Pipeline 阶段划分
+# ============================================
+stages:
+  - setup # 依赖安装和缓存
+  - build # 构建静态站点
+  - deploy # 增量部署到 FTP
+
+# ============================================
+# Stage 1: Setup - 依赖缓存优化
+# ============================================
+setup:dependencies:
+  stage: setup
+  tags:
+    - windows
+
+  # 缓存配置：基于 yarn.lock 生成缓存键
+  cache:
+    key:
+      files:
+        - yarn.lock # 当 yarn.lock 变化时，缓存失效
+    paths:
+      - node_modules/
+    policy: pull-push # 拉取并更新缓存
+
   script:
-    - yarn install
-    - yarn generate
-    - if (!(Test-Path .output/public)) { Write-Host "[ERROR] .output/public missing"; exit 1 }
-    - if (Test-Path website) { Remove-Item website -Recurse -Force }
-    - Move-Item .output/public website
-    - if (!(Test-Path website)) { Write-Host "[ERROR] website creation failed"; exit 1 }
-  artifacts:
-    paths: [website/]
-    expire_in: 1 hour
+    # 检查缓存是否有效，智能决定安装策略
+    - |
+      if (Test-Path node_modules/.bin) {
+        Write-Host "✓ Using cached dependencies"
+        # 使用缓存时，快速校验依赖完整性
+        yarn install --frozen-lockfile --prefer-offline --check-files
+      } else {
+        Write-Host "✓ Installing dependencies from scratch"
+        # 首次安装或缓存失效时，完整安装
+        yarn install --frozen-lockfile
+      }
 
-deploy-job:
+    # 显示依赖安装统计
+    - |
+      Write-Host ""
+      Write-Host "Node modules size:"
+      if (Test-Path node_modules) {
+        $size = (Get-ChildItem node_modules -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
+        Write-Host "$([math]::Round($size, 2)) MB"
+      }
+
+  # 将 node_modules 作为 artifact 传递给后续 job
+  artifacts:
+    expire_in: 1h
+    paths:
+      - node_modules/
+
+# ============================================
+# Stage 2: Build - 构建优化
+# ============================================
+build:nuxt:
+  stage: build
+  tags:
+    - windows
+
+  # 直接依赖 setup job，不等待其他 job
+  needs:
+    - setup:dependencies
+
+  # 仅拉取缓存，不更新（节省时间）
+  cache:
+    key:
+      files:
+        - yarn.lock
+    paths:
+      - node_modules/
+    policy: pull
+
+  script:
+    # 构建前验证：确保 node_modules 存在
+    - |
+      if (!(Test-Path node_modules/.bin)) {
+        Write-Error "node_modules not found! Artifacts may not have been passed correctly."
+        exit 1
+      }
+
+    # 执行 Nuxt 静态站点生成
+    - |
+      Write-Host "Starting Nuxt.js static site generation..."
+      yarn generate
+
+    # 构建后验证：确保构建产物存在
+    - |
+      if (!(Test-Path .output/public)) {
+        Write-Error ".output/public missing after build!"
+        exit 1
+      }
+
+    # 重命名为 website（保持与现有流程一致）
+    - |
+      if (Test-Path website) {
+        Remove-Item website -Recurse -Force
+      }
+      Move-Item .output/public website
+
+    # 显示构建产物信息
+    - |
+      Write-Host ""
+      Write-Host "================================================"
+      Write-Host "Build artifacts summary:"
+      Write-Host "================================================"
+      $fileCount = (Get-ChildItem website -Recurse -File | Measure-Object).Count
+      $dirCount = (Get-ChildItem website -Recurse -Directory | Measure-Object).Count
+      $totalSize = (Get-ChildItem website -Recurse -File | Measure-Object -Property Length -Sum).Sum / 1MB
+      Write-Host "Files: $fileCount"
+      Write-Host "Directories: $dirCount"
+      Write-Host "Total size: $([math]::Round($totalSize, 2)) MB"
+      Write-Host "================================================"
+
+  # 将构建产物作为 artifact 传递给部署 job
+  artifacts:
+    expire_in: 1h
+    paths:
+      - website/
+
+  # 仅在相关文件变化时触发构建
+  only:
+    changes:
+      - "**/*.vue"
+      - "**/*.js"
+      - "**/*.ts"
+      - "**/*.css"
+      - "nuxt.config.js"
+      - "package.json"
+      - "yarn.lock"
+
+# ============================================
+# Stage 3: Deploy - WinSCP 增量部署
+# ============================================
+deploy:ftp:
   stage: deploy
-  tags: [windows]
+  tags:
+    - windows
+
+  # 直接依赖 build job
+  needs:
+    - build:nuxt
+
+  # 仅接收 build 产物
   dependencies:
-    - build-job
+    - build:nuxt
+
   before_script:
+    # 环境变量验证：确保所有必需的 FTP 凭证已配置
     - |
       if (-not $env:FTP_HOST -or -not $env:FTP_USER -or -not $env:FTP_PASS) {
-        Write-Error "Missing required FTP environment variables"
+        Write-Error "Missing required FTP environment variables!"
+        Write-Error "Please configure in GitLab CI/CD Settings > Variables:"
+        Write-Error "  - FTP_HOST"
+        Write-Error "  - FTP_USER"
+        Write-Error "  - FTP_PASS (mark as Protected)"
         exit 1
       }
-  script:
+
+    # 验证 PowerShell 版本（需要 5.1+）
     - |
-      function Add-FtpFile {
-        param(
-          [string]$ftpFilePath,
-          [string]$localFile,
-          [string]$username,
-          [string]$password
-        )
-        try {
-          Write-Host "Uploading: $localFile to $ftpFilePath"
-          $ftprequest = [System.Net.FtpWebRequest]::Create($ftpFilePath)
-          $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)
-          $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-          $ftprequest.UseBinary = $true
-          $ftprequest.UsePassive = $true
-          $content = [System.IO.File]::ReadAllBytes($localFile)
-          $ftprequest.ContentLength = $content.Length
-          $rs = $ftprequest.GetRequestStream()
-          $rs.Write($content, 0, $content.Length)
-          $rs.Close()
-          $rs.Dispose()
-          Write-Host "Successfully uploaded: $ftpFilePath"
-        }
-        catch {
-          Write-Error "Failed to upload $localFile : $_"
-          Write-Error "Exception details: $($_.Exception.Message)"
-          exit 1
-        }
-      }
-
-      function Add-FtpDirectory {
-        param(
-          [string]$ftpPath,
-          [string]$username,
-          [string]$password
-        )
-        try {
-          Write-Host "Creating directory: $ftpPath"
-          $ftprequest = [System.Net.FtpWebRequest]::Create($ftpPath)
-          $ftprequest.Credentials = New-Object System.Net.NetworkCredential($username, $password)
-          $ftprequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-          $response = $ftprequest.GetResponse()
-          $response.Close()
-          Write-Host "Successfully created directory: $ftpPath"
-        }
-        catch {
-          Write-Host "Directory creation status: $ftpPath - $($_.Exception.Message)"
-        }
-      }
-
-      function Add-FtpFolderWithFilesRecursive {
-        param(
-          [string]$sourceFolder,
-          [string]$destinationFolder,
-          [string]$username,
-          [string]$password
-        )
-        Write-Host "Starting recursive upload from: $sourceFolder to $destinationFolder"
-        
-        # 确保源文件夹存在
-        if (-not (Test-Path $sourceFolder)) {
-          Write-Error "Source folder does not exist: $sourceFolder"
-          exit 1
-        }
-
-        # 创建目标目录
-        Add-FtpDirectory $destinationFolder $username $password
-
-        # 上传文件
-        $files = Get-ChildItem $sourceFolder -File
-        foreach($file in $files) {
-          $remotePath = "$destinationFolder/$($file.Name)"
-          Add-FtpFile $remotePath $file.FullName $username $password
-        }
-
-        # 递归处理子目录
-        $subDirs = Get-ChildItem $sourceFolder -Directory
-        foreach($subDir in $subDirs) {
-          $remotePath = "$destinationFolder/$($subDir.Name)"
-          Add-FtpFolderWithFilesRecursive $subDir.FullName $remotePath $username $password
-        }
-      }
-
-      # 获取当前工作目录的绝对路径
-      $currentPath = Get-Location
-      $sourcePath = Join-Path $currentPath "website"
-      Write-Host "Source path: $sourcePath"
-      Write-Host "Source path exists: $(Test-Path $sourcePath)"
-
-      # 确保website目录存在
-      if (-not (Test-Path $sourcePath)) {
-        Write-Error "Website directory not found at: $sourcePath"
+      $psVersion = $PSVersionTable.PSVersion
+      Write-Host "PowerShell version: $psVersion"
+      if ($psVersion.Major -lt 5) {
+        Write-Error "PowerShell 5.1 or higher is required"
+        Write-Error "Current version: $psVersion"
+        Write-Error "Please upgrade PowerShell on the GitLab Runner"
         exit 1
       }
+      Write-Host "✓ PowerShell version is compatible"
 
-      # 显示website目录内容
-      Write-Host "Website directory contents:"
-      Get-ChildItem $sourcePath | ForEach-Object { Write-Host "  $($_.Name)" }
+  script:
+    # 调用外部 PowerShell 脚本进行增量部署
+    - .\scripts\deploy-ftp-incremental.ps1
 
-      $ftpUri = "ftp://$env:FTP_HOST/aib"
-      Write-Host "Starting FTP upload to: $ftpUri"
-      Add-FtpFolderWithFilesRecursive $sourcePath $ftpUri $env:FTP_USER $env:FTP_PASS
-      Write-Host "FTP upload completed"
+  # 仅在 main 分支触发部署
+  only:
+    - main
+
+  # 仅在构建成功后执行
+  when: on_success
+
+  # 环境配置
+  environment:
+    name: production
+    url: https://aib.hujiarong.site
+
+# ============================================
+# 可选：部署验证和性能监控
+# ============================================
+validate:deployment:
+  stage: deploy
+  tags:
+    - windows
+
+  needs:
+    - deploy:ftp
+
+  script:
+    # 验证站点可访问性
+    - |
+      Write-Host "Validating deployment..."
+      try {
+        $response = Invoke-WebRequest -Uri "https://aib.hujiarong.site" -Method Head -TimeoutSec 10
+        if ($response.StatusCode -eq 200) {
+          Write-Host "✓ Site is accessible (HTTP $($response.StatusCode))"
+        } else {
+          Write-Warning "Site returned unexpected status code: $($response.StatusCode)"
+        }
+      }
+      catch {
+        Write-Warning "Failed to validate deployment: $($_.Exception.Message)"
+        Write-Host "This may be normal if the site URL is not configured yet."
+      }
+
+  only:
+    - main
+
+  # 手动触发
+  when: manual
+
+  # 允许失败（验证失败不影响部署状态）
+  allow_failure: true
