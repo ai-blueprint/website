@@ -38,29 +38,7 @@ deploy_to_server:
   dependencies:
     - build_project
   script:
-    - |
-      # 使用PowerShell和WinSCP命令行工具上传文件
-      # 确保runner已安装WinSCP
-      $winscpPath = "C:\Program Files (x86)\WinSCP\WinSCP.com"
-      if (-Not (Test-Path $winscpPath)) {
-        $winscpPath = "C:\Program Files\WinSCP\WinSCP.com"
-      }
-      
-      # 生成WinSCP脚本
-      $scriptContent = @"
-      open sftp://$env:USER:$env:PASSWORD@$env:HOST/ -hostkey=*
-      option batch continue
-      option confirm off
-      mkdir -p $env:DEPLOY_PATH
-      put -r ./dist/* $env:DEPLOY_PATH/
-      close
-      exit
-      "@
-      
-      $scriptContent | Out-File -FilePath winscp_script.txt -Encoding utf8
-      
-      # 执行WinSCP脚本
-      & "$winscpPath" /script=winscp_script.txt
-      
-      # 清理临时脚本
-      Remove-Item -Path winscp_script.txt -Force
+    - Write-Output "开始部署到服务器..."
+    # 使用 pscp 上传 dist 目录内容到服务器
+    - 'pscp.exe -batch -pw "$env:PASSWORD" -r dist\* "$env:USER@$env:HOST:$env:DEPLOY_PATH"'
+    - Write-Output "部署完成!"
