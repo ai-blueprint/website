@@ -17,6 +17,8 @@ pnpm-debug.log*
 .idea
 .vscode
 .trae
+.nuxt
+.output
 *.suo
 *.ntvs*
 *.njsproj
