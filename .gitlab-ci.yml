@@ -2,11 +2,9 @@ stages:
   - install
   - build
   - deploy
-
 variables:
   NODE_VERSION: '18.17.0'
   DEPLOY_PATH: '/www/wwwroot/aib/website'
-
 install_dependencies:
   stage: install
   tags:
@@ -17,7 +15,6 @@ install_dependencies:
     paths:
       - node_modules/
     expire_in: 1 day
-
 build_project:
   stage: build
   tags:
@@ -30,7 +27,6 @@ build_project:
     paths:
       - dist/
     expire_in: 1 day
-
 deploy_to_server:
   stage: deploy
   tags:
@@ -43,14 +39,14 @@ deploy_to_server:
       # 解码 PASSWORD 和 HOST 变量（USER 不需要解码）
       $decodedPassword = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$env:PASSWORD"))
       $decodedHost = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$env:HOST"))
-      
+
       # 尝试找到 pscp.exe（优先使用 Git 自带的 scp）
       $scpPath = "C:\Program Files\Git\usr\bin\scp.exe"
       if (-not (Test-Path $scpPath)) {
         $scpPath = "C:\ProgramData\Git\mingw64\bin\scp.exe"
       }
-      
+
       # 使用解码后的值进行部署
       Write-Output "连接到服务器: $decodedHost"
-      & $scpPath -r -P 22 dist\* "$env:USER@$decodedHost:$env:DEPLOY_PATH"
+      & $scpPath -r -P 22 dist\* "${env:USER}@${decodedHost}:${env:DEPLOY_PATH}"
     - Write-Output "部署完成!"
