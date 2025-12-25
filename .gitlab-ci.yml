@@ -46,7 +46,21 @@ deploy_to_server:
         $scpPath = "C:\ProgramData\Git\mingw64\bin\scp.exe"
       }
 
+      # 查找 dist 目录（GitLab CI 可能将其放在不同位置）
+      $distPath = $null
+      if (Test-Path "dist") {
+        $distPath = "dist"
+      } elseif (Test-Path "build/dist") {
+        $distPath = "build/dist"
+      } elseif (Test-Path "website/dist") {
+        $distPath = "website/dist"
+      } else {
+        Write-Error "找不到 dist 目录"
+        exit 1
+      }
+
       # 使用解码后的值进行部署
       Write-Output "连接到服务器: $decodedHost"
-      & $scpPath -r -P 22 dist\* "${env:USER}@${decodedHost}:${env:DEPLOY_PATH}"
+      Write-Output "部署路径: $distPath"
+      & $scpPath -r -P 22 "$distPath\*" "${env:USER}@${decodedHost}:${env:DEPLOY_PATH}"
     - Write-Output "部署完成!"
