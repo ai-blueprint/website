@@ -38,7 +38,15 @@ deploy_to_server:
   dependencies:
     - build_project
   script:
-    - Write-Output "开始部署到服务器..."
-    # 使用 pscp 上传 dist 目录内容到服务器
-    - 'pscp.exe -batch -pw "$env:PASSWORD" -r dist\* "$env:USER@$env:HOST:$env:DEPLOY_PATH"'
-    - Write-Output "部署完成!"
+    # 1. 配置SSH环境（Windows PowerShell语法）
+    - $SSHDir = "$env:USERPROFILE\.ssh"
+    - New-Item -ItemType Directory -Force -Path $SSHDir
+    - echo "$env:SSH_PRIVATE_KEY" | Out-File -FilePath "$SSHDir\id_ed25519" -Encoding ascii
+    - echo "$env:SSH_KNOWN_HOSTS" | Out-File -FilePath "$SSHDir\known_hosts" -Encoding ascii
+    
+    # 2. 设置文件权限（Windows下权限要求较宽松）
+    - icacls "$SSHDir\id_ed25519" /inheritance:r /grant:r "$env:USERNAME`:F"
+    
+    # 或者使用sftp（更可靠）
+    - echo "put -r dist/*" | sftp -i "$SSHDir\id_ed25519" "$env:DEPLOY_USER@$env:DEPLOY_SERVER`:$env:DEPLOY_PATH"
+    
