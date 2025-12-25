@@ -38,15 +38,19 @@ deploy_to_server:
   dependencies:
     - build_project
   script:
-    # 1. 配置SSH环境（Windows PowerShell语法）
-    - $SSHDir = "$env:USERPROFILE\.ssh"
-    - New-Item -ItemType Directory -Force -Path $SSHDir
-    - echo "$env:SSH_PRIVATE_KEY" | Out-File -FilePath "$SSHDir\id_ed25519" -Encoding ascii
-    - echo "$env:SSH_KNOWN_HOSTS" | Out-File -FilePath "$SSHDir\known_hosts" -Encoding ascii
-    
-    # 2. 设置文件权限（Windows下权限要求较宽松）
-    - icacls "$SSHDir\id_ed25519" /inheritance:r /grant:r "$env:USERNAME`:F"
-    
-    # 或者使用sftp（更可靠）
-    - echo "put -r dist/*" | sftp -i "$SSHDir\id_ed25519" "$env:DEPLOY_USER@$env:DEPLOY_SERVER`:$env:DEPLOY_PATH"
-    
+    - Write-Output "开始部署到服务器..."
+    - |
+      # 解码 PASSWORD 和 HOST 变量（USER 不需要解码）
+      $decodedPassword = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$env:PASSWORD"))
+      $decodedHost = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("$env:HOST"))
+      
+      # 尝试找到 pscp.exe（优先使用 Git 自带的 scp）
+      $scpPath = "C:\Program Files\Git\usr\bin\scp.exe"
+      if (-not (Test-Path $scpPath)) {
+        $scpPath = "C:\ProgramData\Git\mingw64\bin\scp.exe"
+      }
+      
+      # 使用解码后的值进行部署
+      Write-Output "连接到服务器: $decodedHost"
+      & $scpPath -r -P 22 dist\* "$env:USER@$decodedHost:$env:DEPLOY_PATH"
+    - Write-Output "部署完成!"
