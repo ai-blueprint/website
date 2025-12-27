@@ -1,35 +1,50 @@
 name: Deploy to Server
-
 on:
   push:
     branches:
       - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+      
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
+          node-version: '20'
+      
       - name: Install dependencies
         run: yarn install
-
+      
       - name: Build project
         run: yarn build
-
+      
+      - name: Check build output
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Directory contents:"
+          ls -la
+          echo "Output directory contents:"
+          if [ -d ".output" ]; then
+            ls -la .output/
+            echo "Output directory size:"
+            du -sh .output/
+          else
+            echo "Output directory not found"
+            exit 1
+          fi
+      
       - name: Deploy to server via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-          source: 'dist/*'
-          target: '/www/wwwroot/Kernyr'
+          source: 'dist/**'
+          target: '/www/wwwroot/aib'
           strip_components: 1
           overwrite: true
+          debug: true
