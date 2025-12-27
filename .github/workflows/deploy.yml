@@ -28,10 +28,10 @@ jobs:
           echo "Directory contents:"
           ls -la
           echo "Output directory contents:"
-          if [ -d "dist" ]; then
-            ls -la dist/
+          if [ -d "website" ]; then
+            ls -la website/
             echo "Output directory size:"
-            du -sh dist/
+            du -sh website/
           else
             echo "Output directory not found"
             exit 1
@@ -43,7 +43,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           password: ${{ secrets.PASSWORD }}
-          source: 'dist/**'
+          source: 'website/**'
           target: '/www/wwwroot/aib'
           strip_components: 1
           overwrite: true
