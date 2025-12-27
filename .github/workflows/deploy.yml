@@ -28,10 +28,10 @@ jobs:
           echo "Directory contents:"
           ls -la
           echo "Output directory contents:"
-          if [ -d ".output" ]; then
-            ls -la .output/
+          if [ -d "dist" ]; then
+            ls -la dist/
             echo "Output directory size:"
-            du -sh .output/
+            du -sh dist/
           else
             echo "Output directory not found"
             exit 1
