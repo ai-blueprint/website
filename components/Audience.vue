@@ -9,7 +9,7 @@
     <div class="container">
       <div class="audience-grid">
         <div 
-          v-for="(group, index) in targetGroups" 
+          v-for="(group, index) in localizedGroups" 
           :key="index"
           class="audience-card"
           :class="index === 0 ? 'card-blue' : 'card-purple'"
@@ -30,7 +30,31 @@
 </template>
 
 <script setup>
-import { targetGroups } from '~/data/audience'
+import { computed } from 'vue'
+
+const { t } = useI18n()
+
+// 获取本地化的目标用户列表
+const localizedGroups = computed(() => {
+  return [
+    {
+      title: t('audience.items[0].title'),
+      points: [
+        t('audience.items[0].points[0]'),
+        t('audience.items[0].points[1]'),
+        t('audience.items[0].points[2]')
+      ]
+    },
+    {
+      title: t('audience.items[1].title'),
+      points: [
+        t('audience.items[1].points[0]'),
+        t('audience.items[1].points[1]'),
+        t('audience.items[1].points[2]')
+      ]
+    }
+  ]
+})
 </script>
 
 <style scoped>

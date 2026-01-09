@@ -102,11 +102,15 @@ export default defineNuxtConfig({
     langDir: 'locales',
     defaultLocale: 'zh-CN',
     strategy: 'prefix_except_default',
-    // SEO相关配置
+    // 浏览器语言自动检测配置
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
+      alwaysRedirect: false,
+      cookieCrossOrigin: false,
+      cookieSecure: false,
+      fallbackLocale: 'zh-CN',
     },
   },
 

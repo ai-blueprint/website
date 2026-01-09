@@ -7,42 +7,46 @@
           <div class="brand-logo">
             <NuxtImg
               src="/logo.svg"
-              alt="炼丹蓝图"
+              :alt="t('site.name')"
               width="32"
               height="32"
               loading="lazy"
             />
-            <span class="brand-name">炼丹蓝图</span>
+            <span class="brand-name">{{ t('site.name') }}</span>
           </div>
           <p class="brand-description">
-            致力于降低 AI 架构创新门槛，<br>
-            让每个人都能成为 AI 架构师。
+            <template v-for="(line, index) in descriptionLines" :key="index">
+              {{ line }}<br v-if="index < descriptionLines.length - 1" />
+            </template>
           </p>
         </div>
 
         <!-- 导航链接 -->
         <nav class="footer-links" aria-label="页脚导航">
           <div class="link-group">
-            <h3 class="link-title">产品</h3>
+            <h3 class="link-title">{{ t('footer.links.product.title') }}</h3>
             <ul class="link-list" role="list">
-              <li><a href="#">开放社区</a></li>
-              <li><a href="#">架构擂台</a></li>
+              <li v-for="(item, index) in productLinks" :key="index">
+                <a :href="item.url">{{ item.name }}</a>
+              </li>
             </ul>
           </div>
 
           <div class="link-group">
-            <h3 class="link-title">资源</h3>
+            <h3 class="link-title">{{ t('footer.links.resources.title') }}</h3>
             <ul class="link-list" role="list">
-              <li><a href="#">官方文档</a></li>
-              <li><a href="#">组件市场</a></li>
+              <li v-for="(item, index) in resourceLinks" :key="index">
+                <a :href="item.url">{{ item.name }}</a>
+              </li>
             </ul>
           </div>
 
           <div class="link-group">
-            <h3 class="link-title">联系</h3>
+            <h3 class="link-title">{{ t('footer.links.contact.title') }}</h3>
             <ul class="link-list" role="list">
-              <li><a href="#">QQ 群</a></li>
-              <li><a href="#">微信群</a></li>
+              <li v-for="(item, index) in contactLinks" :key="index">
+                <a :href="item.url">{{ item.name }}</a>
+              </li>
             </ul>
           </div>
         </nav>
@@ -51,7 +55,7 @@
       <!-- 版权信息 -->
       <div class="footer-bottom">
         <p class="copyright">
-          &copy; 2025 AI Blueprint. All rights reserved.
+          {{ t('footer.copyright') }}
         </p>
         <div class="social-links" role="list" aria-label="社交媒体链接">
           <a href="https://github.com" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
@@ -71,7 +75,41 @@
 </template>
 
 <script setup>
-// Footer组件 - 与原版网站保持一致
+import { computed } from 'vue'
+
+const { t } = useI18n()
+
+// 获取本地化的页脚链接
+const productLinks = computed(() => [
+  { name: t('footer.links.product.items[0].name'), url: t('footer.links.product.items[0].url') },
+  { name: t('footer.links.product.items[1].name'), url: t('footer.links.product.items[1].url') }
+])
+
+const resourceLinks = computed(() => [
+  { name: t('footer.links.resources.items[0].name'), url: t('footer.links.resources.items[0].url') },
+  { name: t('footer.links.resources.items[1].name'), url: t('footer.links.resources.items[1].url') }
+])
+
+const contactLinks = computed(() => [
+  { name: t('footer.links.contact.items[0].name'), url: t('footer.links.contact.items[0].url') },
+  { name: t('footer.links.contact.items[1].name'), url: t('footer.links.contact.items[1].url') }
+])
+
+// 按逗号分隔描述文本，实现换行显示
+const descriptionLines = computed(() => {
+  const description = t('footer.description')
+  // 中文用中文逗号分隔，英文用英文逗号分隔
+  if (description.includes('，')) {
+    return description.split('，').map((line, index, arr) =>
+      index < arr.length - 1 ? line + '，' : line
+    )
+  } else if (description.includes(', ')) {
+    return description.split(', ').map((line, index, arr) =>
+      index < arr.length - 1 ? line + ',' : line
+    )
+  }
+  return [description]
+})
 </script>
 
 <style scoped>

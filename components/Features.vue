@@ -2,15 +2,18 @@
   <section id="features" class="features">
     <div class="container">
       <header class="section-header">
-        <h2 class="section-title">化繁为简，专注创新</h2>
-        <p class="section-description">无论是初学者还是资深算法工程师，炼丹蓝图都能为你提供最流畅的架构设计体验。</p>
+        <h2 class="section-title">{{ t('features.title') }}</h2>
+        <p class="section-description">{{ t('features.subtitle') }}</p>
       </header>
 
       <div class="features-grid">
         <FeatureCard
-          v-for="(feature, index) in features"
+          v-for="(feature, index) in localizedFeatures"
           :key="index"
-          v-bind="feature"
+          :title="feature.title"
+          :description="feature.description"
+          :icon="feature.icon"
+          :color="feature.color"
         />
       </div>
     </div>
@@ -18,7 +21,33 @@
 </template>
 
 <script setup>
-import { features } from '~/data/features'
+import { computed } from 'vue'
+
+const { t } = useI18n()
+
+// 获取本地化的功能列表
+const localizedFeatures = computed(() => {
+  return [
+    {
+      title: t('features.items[0].title'),
+      description: t('features.items[0].description'),
+      icon: t('features.items[0].icon'),
+      color: t('features.items[0].color')
+    },
+    {
+      title: t('features.items[1].title'),
+      description: t('features.items[1].description'),
+      icon: t('features.items[1].icon'),
+      color: t('features.items[1].color')
+    },
+    {
+      title: t('features.items[2].title'),
+      description: t('features.items[2].description'),
+      icon: t('features.items[2].icon'),
+      color: t('features.items[2].color')
+    }
+  ]
+})
 </script>
 
 <style scoped>

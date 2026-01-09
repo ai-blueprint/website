@@ -43,14 +43,14 @@ export default {
       {
         title: '丰富的 AI 组件库',
         description: '内置数百种 AI 底层计算组件，即拖即用。支持自定义封装模块，复用你的独家"丹方"。',
-        icon: 'components',
+        icon: 'beaker',
         color: 'purple'
       },
       {
         title: '实时数据展示',
         description: '实时计算多样数据在您设计的架构下的流通情况，自动发现问题，可单独查看某个节点的输出数据并可视化展示。',
-        icon: 'realtime',
-        color: 'green'
+        icon: 'code',
+        color: 'teal'
       }
     ]
   },
@@ -133,5 +133,12 @@ export default {
     defaultTitle: '炼丹蓝图 - AI架构设计工具',
     defaultDescription: '用蓝图的形式设计AI架构。拖拽节点、连线，让灵感在"炼丹蓝图"中瞬间转化为可运行的模型代码。',
     keywords: 'AI架构设计,炼丹蓝图,深度学习,神经网络,可视化设计,AI组件库,模型设计'
+  },
+
+  // ==================== 语言切换 ====================
+  language: {
+    switch: '语言',
+    zh: '中文',
+    en: 'English'
   }
 }

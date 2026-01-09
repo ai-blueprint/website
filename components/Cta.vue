@@ -1,18 +1,18 @@
 <template>
-  <section class="cta" role="complementary" aria-labelledby="cta-title">
+  <section id="cta" class="cta" role="complementary" aria-labelledby="cta-title">
     <div class="container">
       <div class="cta-content">
-        <h2 id="cta-title" class="cta-title">准备好开始炼丹了吗</h2>
+        <h2 id="cta-title" class="cta-title">{{ t('cta.title') }}</h2>
         <p class="cta-description">
-          下载安装，打开即用。无需配置环境，简单便捷。
+          {{ t('cta.subtitle') }}
         </p>
         <a 
           href="#download" 
           class="cta-button"
           role="button"
-          aria-label="下载炼丹蓝图"
+          :aria-label="t('cta.button')"
         >
-          下载 · 敬请期待
+          {{ t('cta.button') }}
         </a>
       </div>
     </div>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-// 组合式 API 逻辑
+const { t } = useI18n()
 </script>
 
 <style scoped>

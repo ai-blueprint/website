@@ -26,24 +26,6 @@
  * @param {Object[]} options.alternateLocales - 备用语言版本
  */
 export const useSEO = (options = {}) => {
-  // 解构配置选项，设置默认值
-  const {
-    title = '',
-    description = '',
-    keywords = [],
-    image = '',
-    type = 'website',
-    author = '',
-    publishedTime = '',
-    modifiedTime = '',
-    section = '',
-    tags = [],
-    twitterSite = '',
-    twitterCreator = '',
-    locale = 'zh_CN',
-    alternateLocales = []
-  } = options
-
   // 获取路由和运行时配置
   const route = useRoute()
   const config = useRuntimeConfig()
@@ -52,6 +34,35 @@ export const useSEO = (options = {}) => {
   const baseUrl = config.public.siteUrl || 'https://aib.hujiarong.site'
   const siteName = config.public.siteName || '炼丹蓝图'
   const currentUrl = `${baseUrl}${route.path}`
+  
+  // 辅助函数：获取值（支持 ref 和普通值）
+  const getValue = (val, defaultVal = '') => {
+    if (val === undefined || val === null) return defaultVal
+    // 如果是 ref 或 computed，获取其 value
+    if (typeof val === 'object' && 'value' in val) {
+      return val.value ?? defaultVal
+    }
+    return val ?? defaultVal
+  }
+
+  // 解构配置选项，设置默认值
+  const title = getValue(options.title, '')
+  const description = getValue(options.description, '')
+  const keywordsRaw = getValue(options.keywords, [])
+  const keywords = Array.isArray(keywordsRaw) ? keywordsRaw : []
+  const image = getValue(options.image, '')
+  const type = getValue(options.type, 'website')
+  const author = getValue(options.author, '')
+  const publishedTime = getValue(options.publishedTime, '')
+  const modifiedTime = getValue(options.modifiedTime, '')
+  const section = getValue(options.section, '')
+  const tagsRaw = getValue(options.tags, [])
+  const tags = Array.isArray(tagsRaw) ? tagsRaw : []
+  const twitterSite = getValue(options.twitterSite, '')
+  const twitterCreator = getValue(options.twitterCreator, '')
+  const locale = getValue(options.locale, 'zh_CN')
+  const alternateLocalesRaw = getValue(options.alternateLocales, [])
+  const alternateLocales = Array.isArray(alternateLocalesRaw) ? alternateLocalesRaw : []
   
   // 分享图片URL（默认使用og-image.jpg）
   const ogImage = image || `${baseUrl}/og-image.jpg`

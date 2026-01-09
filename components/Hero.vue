@@ -7,17 +7,16 @@
       <div class="hero-content">
         <div class="hero-badge" role="status" aria-live="polite">
           <span class="badge-indicator"></span>
-          内测阶段即将开始！
+          {{ t('hero.badge') }}
         </div>
 
         <h1 class="hero-title">
-          AI 架构设计<br />
-          <span class="gradient-text">从未如此优雅简单</span>
+          {{ t('hero.title') }}<br />
+          <span class="gradient-text">{{ t('hero.subtitle') }}</span>
         </h1>
 
         <p class="hero-description">
-          用蓝图的形式设计AI架构。拖拽节点、连线，<br class="desktop-only" />
-          让灵感在"炼丹蓝图"中瞬间转化为可运行的模型代码。
+          {{ t('hero.description') }}
         </p>
 
         <article class="editor-container float-animation" aria-label="编辑器预览">
@@ -25,7 +24,7 @@
           <div class="editor-screenshot">
             <img
               src="/images/editor.svg"
-              alt="炼丹蓝图编辑器界面预览"
+              :alt="t('site.name') + ' 编辑器界面预览'"
               loading="eager"
             />
           </div>
@@ -34,6 +33,10 @@
     </div>
   </section>
 </template>
+
+<script setup>
+const { t } = useI18n()
+</script>
 
 <style scoped>
 .hero {

@@ -1,25 +1,31 @@
 <template>
-  <nav class="navbar" role="navigation" aria-label="主导航">
+  <nav class="navbar" role="navigation" :aria-label="t('nav.features')">
     <div class="container">
       <div class="navbar-content">
-        <a href="/" class="logo-link" aria-label="炼丹蓝图首页">
-          <img src="/logo.svg" alt="炼丹蓝图LOGO" class="logo-icon" width="40" height="40">
-          <span class="logo-text">炼丹蓝图</span>
-        </a>
+        <NuxtLink :to="localePath('/')" class="logo-link" :aria-label="t('site.name')">
+          <img src="/logo.svg" :alt="t('site.name') + ' LOGO'" class="logo-icon" width="40" height="40">
+          <span class="logo-text">{{ t('site.name') }}</span>
+        </NuxtLink>
 
         <nav class="navbar-menu" aria-label="页面导航">
-          <a href="#features" class="menu-item">核心功能</a>
-          <a href="#audience" class="menu-item">目标用户</a>
-          <a href="#cta" class="menu-item">立即体验</a>
+          <a href="#features" class="menu-item">{{ t('nav.features') }}</a>
+          <a href="#audience" class="menu-item">{{ t('nav.audience') }}</a>
+          <a href="#cta" class="menu-item">{{ t('nav.tryNow') }}</a>
         </nav>
 
         <div class="navbar-actions">
-          <a href="#" class="btn-cta">敬请期待</a>
+          <LanguageSwitcher />
+          <a href="#" class="btn-cta">{{ t('nav.download') }}</a>
         </div>
       </div>
     </div>
   </nav>
 </template>
+
+<script setup>
+const { t } = useI18n()
+const localePath = useLocalePath()
+</script>
 
 <style scoped>
 .navbar {
@@ -83,6 +89,7 @@
 .navbar-actions {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
 }
 
 .btn-cta {
@@ -99,5 +106,13 @@
 .btn-cta:hover {
   background-color: var(--slate-800);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* 移动端隐藏下载按钮文字 */
+@media (max-width: 640px) {
+  .btn-cta {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
 }
 </style>
