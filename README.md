@@ -4,7 +4,7 @@
 
 ## 技术栈
 
-- **Nuxt 4** - 基于 Vue 3 的全栈框架
+- **Nuxt 3** - 基于 Vue 3 的全栈框架
 - **@nuxtjs/i18n** - 国际化支持（中文/英文）
 - **@nuxt/image** - 图片优化
 - **@vueuse/nuxt** - Vue 组合式工具函数
