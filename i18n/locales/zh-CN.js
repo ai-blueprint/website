@@ -92,16 +92,11 @@ export default {
   footer: {
     description: '致力于降低 AI 架构创新门槛，让每个人都能成为 AI 架构师。',
     links: {
-      product: {
-        title: '产品',
+      plan: {
+        title: '计划',
         items: [
           { name: '开放社区', url: '#' },
-          { name: '架构擂台', url: '#' }
-        ]
-      },
-      resources: {
-        title: '资源',
-        items: [
+          { name: '架构擂台', url: '#' },
           { name: '官方文档', url: '#' },
           { name: '组件市场', url: '#' }
         ]
@@ -109,8 +104,8 @@ export default {
       contact: {
         title: '联系',
         items: [
-          { name: 'QQ 群', url: '#' },
-          { name: '微信群', url: '#' }
+          { name: 'GitHub', url: 'https://github.com/ai-blueprint' },
+          { name: 'QQ 群', url: '#' }
         ]
       }
     },

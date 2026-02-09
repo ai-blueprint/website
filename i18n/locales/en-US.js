@@ -92,16 +92,11 @@ export default {
   footer: {
     description: 'Lowering the barrier to AI innovation — empowering everyone to be an AI architect.',
     links: {
-      product: {
-        title: 'Product',
+      plan: {
+        title: 'Plan',
         items: [
           { name: 'Community', url: '#' },
-          { name: 'Architecture Arena', url: '#' }
-        ]
-      },
-      resources: {
-        title: 'Resources',
-        items: [
+          { name: 'Architecture Arena', url: '#' },
           { name: 'Documentation', url: '#' },
           { name: 'Component Market', url: '#' }
         ]
@@ -109,8 +104,8 @@ export default {
       contact: {
         title: 'Contact',
         items: [
-          { name: 'Discord', url: '#' },
-          { name: 'Twitter', url: '#' }
+          { name: 'GitHub', url: 'https://github.com/ai-blueprint' },
+          { name: 'QQ Group', url: '#' }
         ]
       }
     },

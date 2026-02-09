@@ -24,18 +24,9 @@
         <!-- 导航链接 -->
         <nav class="footer-links" aria-label="页脚导航">
           <div class="link-group">
-            <h3 class="link-title">{{ t('footer.links.product.title') }}</h3>
+            <h3 class="link-title">{{ t('footer.links.plan.title') }}</h3>
             <ul class="link-list" role="list">
-              <li v-for="(item, index) in productLinks" :key="index">
-                <a :href="item.url">{{ item.name }}</a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="link-group">
-            <h3 class="link-title">{{ t('footer.links.resources.title') }}</h3>
-            <ul class="link-list" role="list">
-              <li v-for="(item, index) in resourceLinks" :key="index">
+              <li v-for="(item, index) in planLinks" :key="index">
                 <a :href="item.url">{{ item.name }}</a>
               </li>
             </ul>
@@ -45,7 +36,7 @@
             <h3 class="link-title">{{ t('footer.links.contact.title') }}</h3>
             <ul class="link-list" role="list">
               <li v-for="(item, index) in contactLinks" :key="index">
-                <a :href="item.url">{{ item.name }}</a>
+                <a :href="item.url" target="_blank" rel="noopener noreferrer">{{ item.name }}</a>
               </li>
             </ul>
           </div>
@@ -80,14 +71,11 @@ import { computed } from 'vue'
 const { t } = useI18n()
 
 // 获取本地化的页脚链接
-const productLinks = computed(() => [
-  { name: t('footer.links.product.items[0].name'), url: t('footer.links.product.items[0].url') },
-  { name: t('footer.links.product.items[1].name'), url: t('footer.links.product.items[1].url') }
-])
-
-const resourceLinks = computed(() => [
-  { name: t('footer.links.resources.items[0].name'), url: t('footer.links.resources.items[0].url') },
-  { name: t('footer.links.resources.items[1].name'), url: t('footer.links.resources.items[1].url') }
+const planLinks = computed(() => [
+  { name: t('footer.links.plan.items[0].name'), url: t('footer.links.plan.items[0].url') },
+  { name: t('footer.links.plan.items[1].name'), url: t('footer.links.plan.items[1].url') },
+  { name: t('footer.links.plan.items[2].name'), url: t('footer.links.plan.items[2].url') },
+  { name: t('footer.links.plan.items[3].name'), url: t('footer.links.plan.items[3].url') }
 ])
 
 const contactLinks = computed(() => [
