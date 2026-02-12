@@ -1,25 +1,25 @@
 <template>
-  <nav class="navbar" v-motion :initial="{ y: -80 }" :enter="{ y: 0 }"> <!-- 导航栏快速下落 -->
+  <nav class="navbar" v-motion :initial="{ y: -60 }" :enter="{ y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } }"> <!-- 导航栏微幅下落 -->
     <div class="container"> <!-- 内容定宽容器 -->
       <div class="navbar-content"> <!-- 导航栏主体布局 -->
-        <NuxtLink to="/" class="logo-link" v-motion :initial="{ scale: 1 }" :enter="{ scale: 1 }" :hovered="{ scale: 1.1 }"> <!-- Logo 快速缩放 -->
+        <NuxtLink to="/" class="logo-link" v-motion :initial="{ scale: 1 }" :enter="{ scale: 1 }" :hovered="{ scale: 1.03, transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- Logo 极微缩放 -->
           <img src="/logo.svg" alt="LOGO" class="logo-icon"> <!-- 项目Logo图标 -->
           <span class="logo-text">炼丹蓝图</span> <!-- 项目名称文字 -->
         </NuxtLink>
 
         <nav class="navbar-menu"> <!-- 中间菜单区域 -->
-          <a v-for="(item, index) in menuItems" :key="index" :href="item.link" class="menu-item" v-motion :initial="{ y: 0, color: '#475569' }" :enter="{ y: 0, color: '#475569' }" :hovered="{ y: -3, color: '#82cbfa' }"> <!-- 菜单项快速上浮 -->
+          <a v-for="(item, index) in menuItems" :key="index" :href="item.link" class="menu-item" v-motion :initial="{ y: 0, color: '#475569' }" :enter="{ y: 0, color: '#475569' }" :hovered="{ y: -2, color: '#82cbfa', transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- 菜单项极微上浮 -->
             {{ item.name }}
           </a>
         </nav>
 
         <div class="navbar-actions"> <!-- 右侧动作按钮区 -->
-          <a href="https://github.com/kernyr/bmad" target="_blank" class="action-icon" v-motion :initial="{ scale: 1, rotate: 0 }" :enter="{ scale: 1, rotate: 0 }" :hovered="{ scale: 1.2, rotate: 360 }"> <!-- GitHub 快速旋转 -->
+          <a href="https://github.com/kernyr/bmad" target="_blank" class="action-icon" v-motion :initial="{ scale: 1, rotate: 0 }" :enter="{ scale: 1, rotate: 0 }" :hovered="{ scale: 1.1, rotate: 8, transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- GitHub 极微摇摆 -->
             <svg class="icon" viewBox="0 0 24 24">
               <path fill="currentColor" d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.63-.33 2.47-.33c.83 0 1.68.11 2.47.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z" />
             </svg>
           </a>
-          <a href="https://pd.qq.com/s/9n7u1p" target="_blank" class="btn-join" v-motion :initial="{ scale: 1, backgroundColor: '#82cbfa' }" :enter="{ scale: 1, backgroundColor: '#82cbfa' }" :hovered="{ scale: 1.05, backgroundColor: '#5da9e6' }" :tapped="{ scale: 0.95 }"> <!-- 按钮快速回弹 -->
+          <a href="https://pd.qq.com/s/9n7u1p" target="_blank" class="btn-join" v-motion :initial="{ scale: 1, backgroundColor: '#82cbfa' }" :enter="{ scale: 1, backgroundColor: '#82cbfa' }" :hovered="{ scale: 1.03, backgroundColor: '#5da9e6', transition: { type: 'spring', stiffness: 300, damping: 15 } }" :tapped="{ scale: 0.98 }"> <!-- 按钮极微回弹 -->
             加入社区
           </a>
         </div>

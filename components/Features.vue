@@ -1,7 +1,7 @@
 <template>
   <section id="features" class="features"> <!-- 核心特性区域 -->
     <div class="container"> <!-- 内容定宽容器 -->
-      <header class="section-header" v-motion :initial="{ opacity: 0, scale: 0.9 }" :visibleOnce="{ opacity: 1, scale: 1 }"> <!-- 标题进入动画 -->
+      <header class="section-header" v-motion :initial="{ opacity: 0, y: 30 }" :visibleOnce="{ opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } }"> <!-- 标题平滑进入 -->
         <h2 class="section-title">超厉害的核心功能</h2> <!-- 卡通化标题 -->
         <p class="section-description"> <!-- 副标题描述 -->
           专注于 AI 架构设计的快乐与效率，让复杂的模型结构像拼图一样简单
@@ -9,11 +9,12 @@
       </header>
 
       <div class="features-layout"> <!-- 弹性布局容器 -->
-        <FeatureCard v-for="(featureItem, featureIndex) in featureList" :key="featureIndex" :title="featureItem.title" :description="featureItem.description" :icon="featureItem.icon" :color="featureItem.color" v-motion :initial="{ opacity: 0, y: 50 }" :visibleOnce="{
+        <FeatureCard v-for="(featureItem, featureIndex) in featureList" :key="featureIndex" :title="featureItem.title" :description="featureItem.description" :icon="featureItem.icon" :color="featureItem.color" v-motion :initial="{ opacity: 0, scale: 0.9, y: 30 }" :visibleOnce="{
           opacity: 1,
+          scale: 1,
           y: 0,
-          transition: { delay: featureIndex * 150, type: 'spring', stiffness: 100 }
-        }" /> <!-- 自动弹入的特性卡片 -->
+          transition: { delay: featureIndex * 100, type: 'spring', stiffness: 200, damping: 25 }
+        }" /> <!-- 自动平滑弹入的卡片 -->
       </div>
     </div>
   </section>
@@ -52,11 +53,11 @@ const featureList = [                                                   // 核�
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
   /* 最大宽度 */
   margin: 0 auto;
   /* 居中 */
-  padding: 0 1.5rem;
+  padding: 0 1.25rem;
   /* 左右边距 */
 }
 
@@ -95,10 +96,8 @@ const featureList = [                                                   // 核�
   flex-wrap: wrap;
   /* 自动换行适配多端 */
   gap: 2rem;
-  /* 卡片间距 */
+  /* 增加卡片间距 */
   justify-content: center;
   /* 居中排列 */
 }
-
-/* FeatureCard 组件内部已处理弹性，此处仅负责容器排布 */
 </style>

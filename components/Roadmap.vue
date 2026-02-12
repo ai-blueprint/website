@@ -1,7 +1,11 @@
 <template>
     <section id="roadmap" class="roadmap"> <!-- 开发计划区域 -->
         <div class="container"> <!-- 内容定宽容器 -->
-            <header class="section-header" v-motion :initial="{ opacity: 0, scale: 0.8 }" :visibleOnce="{ opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 250 } }"> <!-- 快速入场动画 -->
+            <header class="section-header" v-motion :initial="{ opacity: 0, scale: 0.95 }" :visibleOnce="{
+                opacity: 1,
+                scale: 1,
+                transition: { type: 'spring', stiffness: 200, damping: 20 }
+            }"> <!-- 标题平滑进入 -->
                 <h2 class="section-title">我们的进化蓝图</h2> <!-- 卡通风格标题 -->
                 <p class="section-description"> <!-- 副标题描述 -->
                     让 AI 学习变得像玩积木一样简单有趣，以下是我们要实现的超级功能
@@ -9,12 +13,16 @@
             </header>
 
             <div class="roadmap-list"> <!-- 计划项流式布局 -->
-                <div v-for="(roadmapItem, itemIndex) in roadmapList" :key="itemIndex" class="roadmap-card" :class="roadmapItem.colorTheme" v-motion :initial="{ opacity: 0, scale: 0.5, y: 20 }" :visibleOnce="{
+                <div v-for="(roadmapItem, itemIndex) in roadmapList" :key="itemIndex" class="roadmap-card" :class="roadmapItem.colorTheme" v-motion :initial="{ opacity: 0, scale: 0.9, y: 20 }" :visibleOnce="{
                     opacity: 1,
                     scale: 1,
                     y: 0,
-                    transition: { delay: itemIndex * 50, type: 'spring', stiffness: 300 }
-                }" :hovered="{ scale: 1.05, y: -8 }"> <!-- 紧凑布局的彩色卡片 -->
+                    transition: { delay: itemIndex * 50, type: 'spring', stiffness: 200, damping: 25 }
+                }" :hovered="{
+            scale: 1.03,
+            y: -5,
+            transition: { type: 'spring', stiffness: 300, damping: 15 }
+        }"> <!-- 自动平滑弹入的卡片 -->
                     <div class="status-wrap"> <!-- 状态包裹层 -->
                         <div class="status-badge"> <!-- 卡通状态标签 -->
                             {{ roadmapItem.statusText }} <!-- 显著的 emoji -->
@@ -169,6 +177,7 @@ const roadmapList = [                                                   // 使�
     font-size: 1.5rem;
     /* 缩小标题字号 */
     font-weight: 900;
+    /* 极粗字重 */
     margin-bottom: 0.75rem;
 }
 
