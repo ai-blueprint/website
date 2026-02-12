@@ -28,7 +28,7 @@
             </svg>
             <span>前往 GitHub</span> <!-- 精简文字 -->
           </a>
-          <a href="https://pd.qq.com/s/9n7u1p" target="_blank" class="btn-action btn-secondary" v-motion :initial="{ scale: 1, y: 0 }" :enter="{ scale: 1, y: 0 }" :hovered="{ scale: 1.05, y: -5, transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- 社区按钮平滑放大 -->
+          <a href="https://qm.qq.com/q/EqzcoKCV4O" target="_blank" class="btn-action btn-secondary" v-motion :initial="{ scale: 1, y: 0 }" :enter="{ scale: 1, y: 0 }" :hovered="{ scale: 1.05, y: -5, transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- 社区按钮平滑放大 -->
             <span>加入社区</span> <!-- 精简文字 -->
           </a>
         </div>
