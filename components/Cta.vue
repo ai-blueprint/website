@@ -1,160 +1,193 @@
 <template>
-  <section id="cta" class="cta" role="complementary" aria-labelledby="cta-title">
-    <div class="container">
-      <div class="cta-content">
-        <h2 id="cta-title" class="cta-title">{{ t('cta.title') }}</h2>
-        <p class="cta-description">
-          {{ t('cta.subtitle') }}
+  <section id="cta" class="cta"> <!-- 行动召唤区域 -->
+    <div class="container"> <!-- 内容定宽容器 -->
+      <div class="cta-content"> <!-- 文字内容区 -->
+        <h2 class="cta-title" v-motion :initial="{ opacity: 0, scale: 0.9 }" :visibleOnce="{ opacity: 1, scale: 1, transition: { type: 'spring', stiffness: 250 } }"> <!-- 标题快速弹出 -->
+          准备好开启你的 AI 魔法冒险了吗？
+        </h2>
+        <p class="cta-description" v-motion :initial="{ opacity: 0, y: 20 }" :visibleOnce="{ opacity: 1, y: 0, transition: { delay: 100 } }"> <!-- 描述快速滑入 -->
+          加入我们的魔法社区，和成千上万的小伙伴一起，用最有趣的方式探索 AI 的奥秘吧！
         </p>
-        <a 
-          href="#download" 
-          class="cta-button"
-          role="button"
-          :aria-label="t('cta.button')"
-        >
-          {{ t('cta.button') }}
-        </a>
+        <div class="cta-actions"> <!-- 按钮组 -->
+          <a href="https://github.com/kernyr/bmad" target="_blank" class="btn-action btn-github" v-motion :initial="{ scale: 1 }" :enter="{ scale: 1 }" :hovered="{ scale: 1.1, y: -5 }"> <!-- GitHub 按钮放大 -->
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.63-.33 2.47-.33c.83 0 1.68.11 2.47.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z" />
+            </svg>
+            <span>给项目点个 Star</span>
+          </a>
+          <a href="https://pd.qq.com/s/9n7u1p" target="_blank" class="btn-action btn-community" v-motion :initial="{ scale: 1 }" :enter="{ scale: 1 }" :hovered="{ scale: 1.1, y: -5 }"> <!-- 社区按钮放大 -->
+            <span>进入冒险社区</span>
+          </a>
+        </div>
       </div>
     </div>
+    <div class="cta-decoration-1"></div> <!-- 装饰性大圆圈 -->
+    <div class="cta-decoration-2"></div> <!-- 装饰性小圆圈 -->
   </section>
 </template>
 
 <script setup>
-const { t } = useI18n()
+// 纯静态展示，无需逻辑                                                   // 保持组件简洁
 </script>
 
 <style scoped>
 .cta {
-  padding: 5rem 0;
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-purple) 100%);
+  padding: clamp(6rem, 15vw, 10rem) 0;
+  /* 响应式上下内边距 */
+  background-color: #3b82f6;
+  /* 改为明亮纯蓝色 */
   position: relative;
+  /* 相对定位 */
   overflow: hidden;
-}
-
-.cta::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-  pointer-events: none;
+  /* 隐藏溢出内容 */
 }
 
 .container {
   max-width: 1200px;
+  /* 最大宽度 */
   margin: 0 auto;
-  padding: 0 1rem;
+  /* 居中 */
+  padding: 0 1.5rem;
+  /* 左右内边距 */
   position: relative;
-  z-index: 1;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding: 0 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 2rem;
-  }
+  /* 相对定位 */
+  z-index: 10;
+  /* 确保在装饰层之上 */
 }
 
 .cta-content {
   text-align: center;
-  color: var(--white);
+  /* 文字居中 */
+  color: white;
+  /* 白色文字 */
 }
 
 .cta-title {
-  font-size: 1.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 480px) {
-  .cta-title {
-    font-size: 1.75rem;
-  }
-}
-
-@media (min-width: 640px) {
-  .cta-title {
-    font-size: 2.25rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .cta-title {
-    font-size: 3rem;
-  }
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  /* 响应式标题字号 */
+  font-weight: 900;
+  /* 极粗字重 */
+  margin-bottom: 2rem;
+  /* 下边距 */
+  line-height: 1.2;
+  /* 行高 */
 }
 
 .cta-description {
-  font-size: 0.875rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.9;
-  max-width: 36rem;
+  font-size: clamp(1.125rem, 3vw, 1.5rem);
+  /* 响应式描述字号 */
+  margin-bottom: 4rem;
+  /* 下边距 */
+  opacity: 0.95;
+  /* 微透明 */
+  max-width: 44rem;
+  /* 最大宽度 */
   margin-left: auto;
+  /* 居中 */
   margin-right: auto;
-  line-height: 1.7;
-  padding: 0 0.5rem;
+  /* 居中 */
+  line-height: 1.6;
+  /* 行高 */
+  font-weight: 700;
+  /* 加粗描述 */
 }
 
-@media (min-width: 480px) {
-  .cta-description {
-    font-size: 1rem;
-    padding: 0;
-  }
+.cta-actions {
+  display: flex;
+  /* 弹性布局 */
+  flex-wrap: wrap;
+  /* 自动换行适配多端 */
+  justify-content: center;
+  /* 居中 */
+  gap: 2rem;
+  /* 增加间距 */
 }
 
-@media (min-width: 640px) {
-  .cta-description {
-    font-size: 1.125rem;
-    margin-bottom: 2rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .cta-description {
-    font-size: 1.25rem;
-  }
-}
-
-.cta-button {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--white);
-  color: var(--secondary-color);
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 0.75rem;
+.btn-action {
+  padding: 1.25rem 2.5rem;
+  /* 统一按钮内边距 */
+  border-radius: 2rem;
+  /* 增加圆角 */
+  font-weight: 900;
+  /* 极粗 */
   text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  white-space: nowrap;
+  /* 移除下划线 */
+  display: flex;
+  /* 弹性布局 */
+  align-items: center;
+  /* 垂直居中 */
+  justify-content: center;
+  /* 文字居中 */
+  gap: 0.75rem;
+  /* 图标文字间距 */
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* 快速弹性过渡效果 */
+  flex: 0 1 auto;
+  /* 随内容撑开 */
+  min-width: 220px;
+  /* 最小宽度 */
 }
 
-@media (min-width: 640px) {
-  .cta-button {
-    padding: 1rem 2rem;
-    font-size: 1.125rem;
-  }
+.btn-github {
+  background-color: white;
+  /* 白色背景 */
+  color: #3b82f6;
+  /* 品牌色文字 */
+  box-shadow: 0 8px 0 #2563eb;
+  /* 卡通立体阴影 */
 }
 
-.cta-button:hover {
-  transform: translateY(-0.125rem);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+.btn-community {
+  background-color: rgba(255, 255, 255, 0.2);
+  /* 强化透明度 */
+  color: white;
+  /* 白色文字 */
+  border: 0.25rem solid rgba(255, 255, 255, 0.4);
+  /* 响应式边框 */
+  backdrop-filter: blur(8px);
+  /* 增加模糊 */
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.1);
+  /* 卡通立体阴影 */
 }
 
-.cta-button:active {
-  transform: translateY(0);
+.btn-icon {
+  width: 1.75rem;
+  /* 放大图标 */
+  height: 1.75rem;
+  /* 放大图标 */
 }
 
-.cta-button:focus {
-  outline: 2px solid var(--white);
-  outline-offset: 2px;
+.cta-decoration-1 {
+  position: absolute;
+  /* 绝对定位装饰 */
+  top: -10%;
+  /* 相对位置 */
+  left: -10%;
+  /* 相对位置 */
+  width: clamp(15rem, 40vw, 30rem);
+  /* 响应式尺寸 */
+  height: clamp(15rem, 40vw, 30rem);
+  /* 响应式尺寸 */
+  background: rgba(255, 255, 255, 0.1);
+  /* 极淡白背景 */
+  border-radius: 50%;
+  /* 圆形 */
+}
+
+.cta-decoration-2 {
+  position: absolute;
+  /* 绝对定位装饰 */
+  bottom: -5%;
+  /* 相对位置 */
+  right: -5%;
+  /* 相对位置 */
+  width: clamp(10rem, 30vw, 20rem);
+  /* 响应式尺寸 */
+  height: clamp(10rem, 30vw, 20rem);
+  /* 响应式尺寸 */
+  background: rgba(255, 255, 255, 0.1);
+  /* 极淡白背景 */
+  border-radius: 50%;
+  /* 圆形 */
 }
 </style>

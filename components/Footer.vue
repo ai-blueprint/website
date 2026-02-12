@@ -1,73 +1,50 @@
 <template>
-  <footer class="footer" role="contentinfo">
-    <div class="container">
-      <div class="footer-content">
-        <!-- Logo和简介 -->
-        <div class="footer-brand">
-          <div class="brand-logo">
-            <NuxtImg
-              src="/logo.svg"
-              :alt="t('site.name')"
-              width="32"
-              height="32"
-              loading="lazy"
-            />
-            <span class="brand-name">{{ t('site.name') }}</span>
+  <footer class="footer" v-motion :initial="{ opacity: 0 }" :visibleOnce="{ opacity: 1 }"> <!-- 页脚淡入动画 -->
+    <div class="container"> <!-- 内容定宽容器 -->
+      <div class="footer-card"> <!-- 页脚主体卡通卡片 -->
+        <div class="footer-layout"> <!-- 弹性居中布局 -->
+
+          <div class="brand-section" v-motion :initial="{ opacity: 0, y: 20 }" :visibleOnce="{ opacity: 1, y: 0, transition: { delay: 200 } }"> <!-- 品牌区居中排列 -->
+            <div class="brand-header"> <!-- Logo标题行 -->
+              <div class="logo-box"> <!-- 图标方块 -->
+                <img src="/logo.svg" alt="LOGO" class="logo-img"> <!-- 项目图标 -->
+              </div>
+              <span class="brand-title">炼丹蓝图</span> <!-- 缩小后的标题 -->
+            </div>
+            <p class="brand-text"> <!-- 描述文字 -->
+              致力于降低 AI 架构设计门槛，让每个人都能像玩积木一样，变出属于自己的 AI 魔法。
+            </p>
           </div>
-          <p class="brand-description">
-            <template v-for="(line, index) in descriptionLines" :key="index">
-              {{ line }}<br v-if="index < descriptionLines.length - 1" />
-            </template>
-          </p>
+
+          <nav class="nav-section"> <!-- 导航链接区 -->
+            <div v-for="(group, groupIndex) in navGroups" :key="groupIndex" class="nav-group" v-motion :initial="{ opacity: 0, y: 20 }" :visibleOnce="{ opacity: 1, y: 0, transition: { delay: 300 + groupIndex * 100 } }"> <!-- 导航组居中对齐 -->
+              <h4 class="group-name">{{ group.title }}</h4> <!-- 分组标题 -->
+              <div class="link-stack"> <!-- 链接垂直堆叠 -->
+                <a v-for="(link, linkIndex) in group.links" :key="linkIndex" :href="link.url" class="footer-link" v-motion :initial="{ x: 0 }" :hovered="{ x: 8, color: '#9975f7' }"> <!-- 悬停反馈 -->
+                  <span class="dot"></span> <!-- 装饰小圆点 -->
+                  {{ link.name }}
+                </a>
+              </div>
+            </div>
+          </nav>
+
+          <div class="social-section" v-motion :initial="{ opacity: 0, scale: 0.9 }" :visibleOnce="{ opacity: 1, scale: 1, transition: { delay: 500 } }"> <!-- 社交区居中 -->
+            <a href="https://github.com/kernyr/bmad" target="_blank" class="github-pill" v-motion :hovered="{ scale: 1.05, y: -5 }"> <!-- 精简后的药丸按钮 -->
+              <svg class="pill-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.63-.33 2.47-.33c.83 0 1.68.11 2.47.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z" />
+              </svg>
+              <span>GitHub 魔法屋</span>
+            </a>
+          </div>
+
         </div>
 
-        <!-- 导航链接 -->
-        <nav class="footer-links" aria-label="页脚导航">
-          <div class="link-group">
-            <h3 class="link-title">{{ t('footer.links.product.title') }}</h3>
-            <ul class="link-list" role="list">
-              <li v-for="(item, index) in productLinks" :key="index">
-                <a :href="item.url">{{ item.name }}</a>
-              </li>
-            </ul>
-          </div>
+        <div class="footer-divider"></div> <!-- 分割线 -->
 
-          <div class="link-group">
-            <h3 class="link-title">{{ t('footer.links.resources.title') }}</h3>
-            <ul class="link-list" role="list">
-              <li v-for="(item, index) in resourceLinks" :key="index">
-                <a :href="item.url">{{ item.name }}</a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="link-group">
-            <h3 class="link-title">{{ t('footer.links.contact.title') }}</h3>
-            <ul class="link-list" role="list">
-              <li v-for="(item, index) in contactLinks" :key="index">
-                <a :href="item.url">{{ item.name }}</a>
-              </li>
-            </ul>
-          </div>
-        </nav>
-      </div>
-
-      <!-- 版权信息 -->
-      <div class="footer-bottom">
-        <p class="copyright">
-          {{ t('footer.copyright') }}
-        </p>
-        <div class="social-links" role="list" aria-label="社交媒体链接">
-          <a href="https://github.com/ai-blueprint" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-            <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
-            </svg>
-          </a>
-<!--           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-            <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
-            </svg>
-          </a> -->
+        <div class="footer-info"> <!-- 版权行 -->
+          <p class="copyright-text">
+            © {{ currentYear }} 炼丹蓝图冒险团队
+          </p>
         </div>
       </div>
     </div>
@@ -75,193 +52,207 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+// --- 算子层：定义页脚数据 ---
+const currentYear = new Date().getFullYear();
 
-const { t } = useI18n()
-
-// 获取本地化的页脚链接
-const productLinks = computed(() => [
-  { name: t('footer.links.product.items[0].name'), url: t('footer.links.product.items[0].url') },
-  { name: t('footer.links.product.items[1].name'), url: t('footer.links.product.items[1].url') }
-])
-
-const resourceLinks = computed(() => [
-  { name: t('footer.links.resources.items[0].name'), url: t('footer.links.resources.items[0].url') },
-  { name: t('footer.links.resources.items[1].name'), url: t('footer.links.resources.items[1].url') }
-])
-
-const contactLinks = computed(() => [
-  { name: t('footer.links.contact.items[0].name'), url: t('footer.links.contact.items[0].url') },
-  { name: t('footer.links.contact.items[1].name'), url: t('footer.links.contact.items[1].url') }
-])
-
-// 按逗号分隔描述文本，实现换行显示
-const descriptionLines = computed(() => {
-  const description = t('footer.description')
-  // 中文用中文逗号分隔，英文用英文逗号分隔
-  if (description.includes('，')) {
-    return description.split('，').map((line, index, arr) =>
-      index < arr.length - 1 ? line + '，' : line
-    )
-  } else if (description.includes(', ')) {
-    return description.split(', ').map((line, index, arr) =>
-      index < arr.length - 1 ? line + ',' : line
-    )
+const navGroups = [
+  {
+    title: '冒险地图',
+    links: [
+      { name: '魔法功能', url: '#features' },
+      { name: '进化蓝图', url: '#roadmap' }
+    ]
+  },
+  {
+    title: '传送门',
+    links: [
+      { name: '冒险社区', url: 'https://pd.qq.com/s/9n7u1p' },
+      { name: 'QQ 频道', url: 'https://pd.qq.com/s/9n7u1p' }
+    ]
   }
-  return [description]
-})
+];
 </script>
 
 <style scoped>
 .footer {
-  background-color: var(--slate-900);
-  color: var(--slate-300);
-  padding: 4rem 0 2rem;
+  background-color: #f8fafc;
+  padding: clamp(2rem, 5vw, 3rem) 0;
+  /* 缩小上下内边距 */
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1100px;
+  /* 缩小容器最大宽度 */
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.25rem;
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding: 0 1.5rem;
-  }
+.footer-card {
+  background-color: white;
+  border-radius: 2.5rem;
+  /* 缩小圆角 */
+  padding: clamp(2rem, 6vw, 3.5rem);
+  /* 缩小内边距 */
+  border: 0.35rem solid #f1f5f9;
+  /* 减薄边框 */
+  box-shadow: 0 15px 30px -15px rgba(0, 0, 0, 0.05);
+  /* 减薄阴影 */
 }
 
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 2rem;
-  }
+.footer-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  /* 缩小分块间距 */
+  align-items: flex-start;
+  justify-content: center;
+  /* 全端居中 */
+  text-align: center;
+  /* 文字居中 */
 }
 
-.footer-content {
-  display: grid;
-  gap: 3rem;
-  grid-template-columns: 1fr;
-  margin-bottom: 3rem;
+.brand-section {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-@media (min-width: 768px) {
-  .footer-content {
-    grid-template-columns: 2fr 3fr;
-  }
-}
-
-.footer-brand {
-  max-width: 24rem;
-}
-
-.brand-logo {
+.brand-header {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.logo-box {
+  width: 2.75rem;
+  /* 缩小图标框 */
+  height: 2.75rem;
+  background-color: #eff6ff;
+  border-radius: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.15rem solid #dbeafe;
+}
+
+.logo-img {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  /* 缩小标题字号 */
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.brand-text {
+  font-size: 1rem;
+  /* 缩小描述字号 */
+  line-height: 1.5;
+  color: #64748b;
+  max-width: 32rem;
+  font-weight: 700;
+}
+
+.nav-section {
+  flex: 1 1 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2.5rem;
+  justify-content: center;
+}
+
+.nav-group {
+  flex: 0 1 auto;
+  min-width: 130px;
+}
+
+.group-name {
+  font-size: 1rem;
+  /* 缩小分组标题 */
+  font-weight: 900;
+  color: #1e293b;
   margin-bottom: 1rem;
 }
 
-.brand-name {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--white);
-}
-
-.brand-description {
-  color: var(--slate-400);
-  line-height: 1.6;
-}
-
-.footer-links {
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-}
-
-.link-group {
+.link-stack {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-.link-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--white);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.link-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.link-list a {
-  color: var(--slate-400);
-  text-decoration: none;
-  transition: color 0.2s ease;
-  font-size: 0.875rem;
-}
-
-.link-list a:hover {
-  color: var(--white);
-}
-
-.link-list a:focus {
-  outline: 2px solid var(--secondary-color);
-  outline-offset: 2px;
-  border-radius: 0.25rem;
-}
-
-.footer-bottom {
-  padding-top: 2rem;
-  border-top: 1px solid var(--slate-800);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  gap: 0.6rem;
+  /* 缩小链接间距 */
   align-items: center;
-  justify-content: space-between;
 }
 
-@media (min-width: 640px) {
-  .footer-bottom {
-    flex-direction: row;
-  }
-}
-
-.copyright {
-  font-size: 0.875rem;
-  color: var(--slate-500);
-  margin: 0;
-}
-
-.social-links {
+.footer-link {
+  font-size: 0.95rem;
+  /* 缩小链接字号 */
+  font-weight: 800;
+  color: #64748b;
+  text-decoration: none;
   display: flex;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.social-links a {
-  color: var(--slate-400);
-  transition: color 0.2s ease;
+.dot {
+  width: 0.35rem;
+  height: 0.35rem;
+  background-color: #9975f7;
+  /* 使用新配色中的梦幻紫 */
+  border-radius: 50%;
+  opacity: 0.5;
 }
 
-.social-links a:hover {
-  color: var(--white);
+.social-section {
+  flex: 1 1 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
 }
 
-.social-links a:focus {
-  outline: 2px solid var(--secondary-color);
-  outline-offset: 2px;
-  border-radius: 0.25rem;
+.github-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: #1e293b;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  /* 缩小药丸内边距 */
+  border-radius: 1.25rem;
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+  /* 卡通立体阴影 */
 }
 
-.social-icon {
-  width: 1.5rem;
-  height: 1.5rem;
+.pill-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.footer-divider {
+  height: 0.25rem;
+  /* 减薄分割线 */
+  background-color: #f8fafc;
+  border-radius: 1rem;
+  margin: 2.5rem 0;
+  /* 缩小上下边距 */
+}
+
+.footer-info {
+  display: flex;
+  justify-content: center;
+}
+
+.copyright-text {
+  font-size: 0.9rem;
+  /* 缩小版权字号 */
+  font-weight: 800;
+  color: #94a3b8;
 }
 </style>

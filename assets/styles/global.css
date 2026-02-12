@@ -1,183 +1,101 @@
 :root {
+  /* --- 新卡通配色方案 --- */
+  /* 基础色 */
+  --color-blue: #82cbfa;
+  /* 天蓝色 */
+  --color-red: #e3706c;
+  /* 珊瑚红 */
+  --color-pink: #e988cb;
+  /* 糖果粉 */
+  --color-orange: #ef8f68;
+  /* 活力橙 */
+  --color-purple-light: #bb6ef7;
+  /* 薰衣草紫 */
+  --color-purple-deep: #9975f7;
+  /* 梦幻紫 */
+  --color-teal: #75cdbc;
+  /* 薄荷绿 */
+  --color-green: #a0d45c;
+  /* 嫩草绿 */
+  --color-peach: #f2a983;
+  /* 蜜桃色 */
+  --color-yellow-warm: #f3b65a;
+  /* 暖阳黄 */
+  --color-yellow-bright: #f2ce57;
+  /* 柠檬黄 */
+
+  /* 语义色 */
+  --primary-color: var(--color-blue);
   /* 主题色 */
-  --primary-color: #6366f1;
-  --secondary-color: #3b82f6;
-  --accent-purple: #a855f7;
-  --accent-blue: #0ea5e9;
-  
-  /* 背景色 */
-  --brand-bg: #f8fafc;
-  --white: #ffffff;
+  --brand-bg: #ffffff;
+  /* 纯白背景 */
   --slate-50: #f8fafc;
+  /* 极浅灰 */
   --slate-100: #f1f5f9;
-  --slate-200: #e2e8f0;
-  --slate-300: #cbd5e1;
-  --slate-400: #94a3b8;
-  --slate-500: #64748b;
-  --slate-600: #475569;
-  --slate-700: #334155;
-  --slate-800: #1e293b;
-  --slate-900: #0f172a;
-  
-  /* 功能色 */
-  --blue-50: #eff6ff;
-  --blue-100: #dbeafe;
-  --blue-200: #bfdbfe;
-  --blue-400: #60a5fa;
-  --blue-500: #3b82f6;
-  --blue-600: #2563eb;
-  --purple-100: #f3e8ff;
-  --purple-200: #e9d5ff;
-  --purple-400: #c084fc;
-  --purple-500: #a855f7;
-  --purple-600: #9333ea;
-  --teal-100: #ccfbf1;
-  --teal-500: #14b8a6;
-  --teal-600: #0d9488;
-  --red-400: #f87171;
-  --yellow-400: #facc15;
-  --green-400: #4ade80;
-  
+  /* 浅灰 */
+  --slate-900: #1e293b;
+  /* 深色文字 */
+
   /* 字体 */
   --font-family: "Noto Sans SC", sans-serif;
-  
-  /* 阴影 */
-  --shadow-soft: 0 20px 40px -15px rgba(99, 102, 241, 0.15);
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* 圆角 */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
-  
-  /* 过渡 */
-  --transition: all 0.3s ease;
+  /* 标准中文字体 */
 }
 
 * {
   margin: 0;
+  /* 清除外边距 */
   padding: 0;
+  /* 清除内边距 */
   box-sizing: border-box;
+  /* 盒模型规范 */
 }
 
 body {
   font-family: var(--font-family);
+  /* 应用全局字体 */
   background-color: var(--brand-bg);
-  background-image: radial-gradient(var(--slate-300) 1px, transparent 1px);
-  background-size: 40px 40px;
-  color: var(--slate-700);
-  line-height: 1.6;
+  /* 应用背景色 */
+  color: var(--slate-900);
+  /* 应用文字色 */
+  line-height: 1.5;
+  /* 舒适行高 */
   overflow-x: hidden;
+  /* 禁止横向溢出 */
+  -webkit-font-smoothing: antialiased;
+  /* 字体平滑 */
 }
 
-/* 全局样式重置 */
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  outline: none;
-}
-
-/* 通用工具类 */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding: 0 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 2rem;
-  }
-}
-
-/* 渐变文本 */
-.gradient-text {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-purple) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* 按钮样式 */
-.btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-lg);
-  font-weight: 600;
-  transition: var(--transition);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
+/* --- 全局卡通按钮基类 --- */
 .btn-primary {
-  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--accent-purple) 100%);
-  color: var(--white);
-  box-shadow: var(--shadow-soft);
+  background-color: var(--primary-color);
+  /* 纯色背景 */
+  color: white;
+  /* 白色文字 */
+  border-radius: 1rem;
+  /* 适中圆角 */
+  padding: 0.75rem 1.5rem;
+  /* 紧凑内边距 */
+  font-weight: 800;
+  /* 极粗字重 */
+  box-shadow: 0 4px 0 #5da9e6;
+  /* 立体阴影 */
+  transition: all 0.1s;
+  /* 极速反馈 */
 }
 
-.btn-primary:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-lg);
+.btn-primary:active {
+  transform: translateY(2px);
+  /* 按下位移 */
+  box-shadow: 0 2px 0 #5da9e6;
+  /* 阴影缩短 */
 }
 
-.btn-secondary {
-  background: var(--white);
-  color: var(--slate-700);
-  border: 1px solid var(--slate-200);
-}
-
-.btn-secondary:hover {
-  background: var(--slate-50);
-}
-
-/* 动画 */
-@keyframes float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.float-animation {
-  animation: float 6s ease-in-out infinite;
-}
-
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--slate-100);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--slate-400);
-  border-radius: var(--radius-full);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--slate-500);
+/* --- 响应式容器 --- */
+.container {
+  max-width: 1100px;
+  /* 缩小最大宽度 */
+  margin: 0 auto;
+  /* 居中 */
+  padding: 0 1.25rem;
+  /* 侧边距 */
 }

@@ -1,26 +1,21 @@
-<!--
-  目标用户板块组件
-  与原版网站 https://aib.hujiarong.site/ 样式保持一致
-  - 无标题
-  - 两个卡片并排，蓝色和紫色渐变背景
--->
 <template>
-  <section id="audience" class="audience">
-    <div class="container">
-      <div class="audience-grid">
-        <div 
-          v-for="(group, index) in localizedGroups" 
-          :key="index"
-          class="audience-card"
-          :class="index === 0 ? 'card-blue' : 'card-purple'"
-        >
-          <h3 class="audience-title">{{ group.title }}</h3>
-          <ul class="audience-list">
-            <li v-for="(point, pointIndex) in group.points" :key="pointIndex" class="audience-item">
-              <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span>{{ point }}</span>
+  <section id="audience" class="audience"> <!-- 适用人群区域 -->
+    <div class="container"> <!-- 内容定宽容器 -->
+      <div class="audience-layout"> <!-- 弹性布局容器 -->
+        <div v-for="(audienceGroup, groupIndex) in audienceList" :key="groupIndex" class="audience-card" :class="groupIndex === 0 ? 'card-blue' : 'card-purple'" v-motion :initial="{ opacity: 0, scale: 0.5 }" :visibleOnce="{
+          opacity: 1,
+          scale: 1,
+          transition: { type: 'spring', stiffness: 300, damping: 15 }
+        }" :hovered="{ scale: 1.05, y: -10 }"> <!-- 快速弹出的卡通卡片 -->
+          <h3 class="audience-title">{{ audienceGroup.title }}</h3> <!-- 分组标题 -->
+          <ul class="audience-list"> <!-- 特点列表 -->
+            <li v-for="(pointText, pointIndex) in audienceGroup.points" :key="pointIndex" class="audience-item" v-motion :hovered="{ x: 15, scale: 1.05, color: '#fff' }"> <!-- 列表项显著放大反馈 -->
+              <div class="check-circle"> <!-- 卡通打钩圆圈 -->
+                <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4">
+                  <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </div>
+              <span>{{ pointText }}</span> <!-- 特点文字 -->
             </li>
           </ul>
         </div>
@@ -30,180 +25,156 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-
-const { t } = useI18n()
-
-// 获取本地化的目标用户列表
-const localizedGroups = computed(() => {
-  return [
-    {
-      title: t('audience.items[0].title'),
-      points: [
-        t('audience.items[0].points[0]'),
-        t('audience.items[0].points[1]'),
-        t('audience.items[0].points[2]')
-      ]
-    },
-    {
-      title: t('audience.items[1].title'),
-      points: [
-        t('audience.items[1].points[0]'),
-        t('audience.items[1].points[1]'),
-        t('audience.items[1].points[2]')
-      ]
-    }
-  ]
-})
+// --- 算子层：定义人群数据 ---
+const audienceList = [                                                  // 适用人群数据列表
+  {
+    title: "AI 小探险家",                                                // 卡通化分组名称
+    points: [                                                           // 核心痛点/收益
+      "不用写复杂的代码，像拼图一样玩转 AI",
+      "亲眼看到数据在模型里是怎么跑来跑去的",
+      "在玩耍中变身成为厉害的 AI 小专家"
+    ]
+  },
+  {
+    title: "算法大魔法师",                                               // 卡通化分组名称
+    points: [                                                           // 核心痛点/收益
+      "快速变出你的 AI 想法，验证各种神奇架构",
+      "一键生成标准代码，省下时间去创造更多可能",
+      "直观展示你的作品，让其他人一眼就看懂你的魔法"
+    ]
+  }
+];
 </script>
 
 <style scoped>
-/* 板块容器 */
 .audience {
-  padding: 5rem 0;
-  background-color: var(--slate-50);
-}
-
-@media (min-width: 1024px) {
-  .audience {
-    padding: 7rem 0;
-  }
+  padding: clamp(4rem, 10vw, 8rem) 0;
+  /* 响应式上下内边距 */
+  background-color: #f8fafc;
+  /* 极浅灰背景 */
 }
 
 .container {
   max-width: 1200px;
+  /* 最大宽度 */
   margin: 0 auto;
-  padding: 0 1rem;
+  /* 居中 */
+  padding: 0 1.5rem;
+  /* 左右内边距 */
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding: 0 1.5rem;
-  }
+.audience-layout {
+  display: flex;
+  /* 弹性布局 */
+  flex-wrap: wrap;
+  /* 自动换行适配多端 */
+  gap: 3rem;
+  /* 增加卡片间距 */
+  justify-content: center;
+  /* 居中排列 */
 }
 
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 2rem;
-  }
-}
-
-/* 卡片网格 - 两列并排 */
-.audience-grid {
-  display: grid;
-  gap: 0;
-  grid-template-columns: 1fr;
-  border-radius: 1.5rem;
-  overflow: hidden;
-}
-
-@media (min-width: 768px) {
-  .audience-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* 卡片基础样式 */
 .audience-card {
-  padding: 3rem 2.5rem;
+  flex: 1 1 400px;
+  /* 弹性伸缩 */
+  min-width: 300px;
+  /* 最小宽度 */
+  padding: clamp(3rem, 8vw, 5rem) clamp(2rem, 5vw, 4rem);
+  /* 响应式内边距 */
   color: white;
+  /* 白色文字 */
+  display: flex;
+  /* 弹性布局 */
+  flex-direction: column;
+  /* 纵向排列 */
+  justify-content: center;
+  /* 居中 */
+  border-radius: 3rem;
+  /* 超大圆角 */
+  box-shadow: 0 20px 0 rgba(0, 0, 0, 0.1);
+  /* 卡通立体阴影 */
+  border: 0.5rem solid rgba(255, 255, 255, 0.2);
+  /* 厚实的卡通边框 */
+  cursor: pointer;
+  /* 手型指针 */
 }
 
-@media (min-width: 1024px) {
-  .audience-card {
-    padding: 4rem 3rem;
-  }
-}
-
-/* 蓝色卡片 - AI初学者 */
 .card-blue {
-  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  background-color: #3b82f6;
+  /* 明亮蓝色 */
 }
 
-/* 紫色卡片 - 算法工程师 */
 .card-purple {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+  background-color: #a855f7;
+  /* 明亮紫色 */
 }
 
-/* 用户群体标题 */
 .audience-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: white;
+  font-size: clamp(2rem, 5vw, 3rem);
+  /* 增加标题字号 */
+  font-weight: 900;
+  /* 极粗字重 */
+  margin-bottom: 3rem;
+  /* 增加下边距 */
 }
 
-@media (min-width: 480px) {
-  .audience-title {
-    font-size: 1.5rem;
-  }
-}
-
-@media (min-width: 640px) {
-  .audience-title {
-    font-size: 1.75rem;
-    margin-bottom: 2rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .audience-title {
-    font-size: 2rem;
-  }
-}
-
-/* 使用场景列表 */
 .audience-list {
   list-style: none;
+  /* 移除默认列表样式 */
   padding: 0;
+  /* 移除内边距 */
   margin: 0;
+  /* 移除外边距 */
   display: flex;
+  /* 弹性布局 */
   flex-direction: column;
-  gap: 1rem;
+  /* 纵向排列 */
+  gap: 2rem;
+  /* 增加列表项间距 */
 }
 
-@media (min-width: 640px) {
-  .audience-list {
-    gap: 1.25rem;
-  }
-}
-
-/* 单个使用场景项 */
 .audience-item {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.8125rem;
-  line-height: 1.5;
+  /* 弹性布局 */
+  align-items: center;
+  /* 垂直居中 */
+  gap: 1.5rem;
+  /* 增加间距 */
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  /* 增加文字大小 */
+  line-height: 1.4;
+  /* 紧凑行高 */
+  font-weight: 800;
+  /* 加粗字体 */
 }
 
-@media (min-width: 480px) {
-  .audience-item {
-    font-size: 0.875rem;
-    align-items: center;
-    gap: 0.875rem;
-  }
-}
-
-@media (min-width: 640px) {
-  .audience-item {
-    font-size: 1rem;
-    line-height: 1.6;
-  }
-}
-
-@media (min-width: 768px) {
-  .audience-item {
-    font-size: 1.0625rem;
-  }
-}
-
-/* 勾选图标 */
-.check-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+.check-circle {
+  width: 3rem;
+  /* 增大圆圈尺寸 */
+  height: 3rem;
+  /* 增大圆圈尺寸 */
+  background-color: rgba(255, 255, 255, 0.3);
+  /* 强化透明度 */
+  border-radius: 50%;
+  /* 圆形 */
+  display: flex;
+  /* 弹性布局 */
+  align-items: center;
+  /* 垂直居中 */
+  justify-content: center;
+  /* 水平居中 */
   flex-shrink: 0;
-  color: rgba(255, 255, 255, 0.9);
+  /* 防止压缩 */
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  /* 增加圆圈边框 */
+}
+
+.check-icon {
+  width: 1.5rem;
+  /* 图标尺寸 */
+  height: 1.5rem;
+  /* 图标尺寸 */
+  color: white;
+  /* 白色图标 */
 }
 </style>

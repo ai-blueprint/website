@@ -1,108 +1,148 @@
-<!--
-  ========================================
-  功能卡片组件 (FeatureCard)
-  ========================================
-  
-  用于展示单个功能特性的卡片，包含图标、标题和描述
-  被 Features.vue 组件使用
-  
-  使用方法：
-  <FeatureCard 
-    title="功能名称" 
-    description="功能描述" 
-    icon="puzzle" 
-    color="blue" 
-  />
--->
-
 <template>
-  <article class="feature-card">
-    <!-- 图标区域：带有彩色背景的圆角方块 -->
-    <div class="feature-icon" :style="iconBgStyle">
-      <BaseIcon :name="icon" size="lg" :color="iconColor" />
+  <article class="feature-card"> <!-- 特性卡片容器 -->
+    <div class="feature-icon" :class="color"> <!-- 图标背景容器 -->
+      <BaseIcon :name="icon" size="xl" /> <!-- 显著放大图标 -->
     </div>
-    
-    <!-- 功能标题 -->
-    <h3 class="feature-title">{{ title }}</h3>
-    
-    <!-- 功能描述 -->
-    <p class="feature-description">{{ description }}</p>
+
+    <h3 class="feature-title">{{ title }}</h3> <!-- 特性标题展示 -->
+    <p class="feature-description">{{ description }}</p> <!-- 特性描述文本 -->
+    <div class="card-bubble"></div> <!-- 装饰性小气泡 -->
   </article>
 </template>
 
 <script setup>
-// 导入颜色配置
-import { colors } from '~/data/icons'
-
-// 定义组件接收的参数
-const props = defineProps({
-  title: { type: String, required: true },       // 功能标题（必填）
-  description: { type: String, required: true }, // 功能描述（必填）
-  icon: { type: String, required: true },        // 图标名称（必填）
-  color: { type: String, default: 'blue' }       // 颜色主题，默认蓝色
-})
-
-// 根据颜色名称获取对应的颜色配置
-const colorConfig = computed(() => colors[props.color] || colors.blue)
-
-// 图标背景样式
-const iconBgStyle = computed(() => ({ backgroundColor: colorConfig.value.bg }))
-
-// 图标颜色
-const iconColor = computed(() => colorConfig.value.text)
+// --- 算子层：定义接收参数 ---
+const props = defineProps({                                             // 定义组件属性
+  title: { type: String, required: true },                              // 特性卡片标题
+  description: { type: String, required: true },                        // 特性详细描述
+  icon: { type: String, required: true },                               // 图标名称标识
+  color: { type: String, default: 'blue' }                              // 主题颜色类名
+});
 </script>
 
 <style scoped>
-/* 卡片容器 */
 .feature-card {
-  background-color: var(--white);
-  padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-/* 鼠标悬停效果：上浮 + 阴影加深 */
-.feature-card:hover {
-  transform: translateY(-0.25rem);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* 图标容器：48x48 的圆角方块 */
-.feature-icon {
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.75rem;
+  background-color: white;
+  /* 白色背景 */
+  padding: clamp(2.5rem, 6vw, 3.5rem) clamp(1.5rem, 4vw, 2.5rem);
+  /* 响应式内边距 */
+  border-radius: 3rem;
+  /* 增大圆角 */
+  border: 0.4rem solid #f1f5f9;
+  /* 增加边框厚度 */
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* 快速弹性过渡 */
   display: flex;
+  /* 弹性布局 */
+  flex-direction: column;
+  /* 纵向排列 */
   align-items: center;
+  /* 居中对齐 */
+  text-align: center;
+  /* 文字居中 */
+  position: relative;
+  /* 相对定位 */
+  overflow: hidden;
+  /* 隐藏溢出 */
+  flex: 0 1 320px;
+  /* 限制基础宽度 */
+  max-width: 380px;
+  /* 限制最大宽度 */
+  box-shadow: 0 12px 0 #f1f5f9;
+  /* 卡通立体阴影 */
+  cursor: pointer;
+  /* 手型指针 */
+}
+
+.feature-card:hover {
+  transform: translateY(-10px) scale(1.08);
+  /* 显著放大上浮 */
+  border-color: #3b82f6;
+  /* 边框变蓝 */
+  box-shadow: 0 20px 0 #dbeafe;
+  /* 阴影变色 */
+}
+
+.feature-icon {
+  width: clamp(4.5rem, 12vw, 5.5rem);
+  /* 显著增大图标容器 */
+  height: clamp(4.5rem, 12vw, 5.5rem);
+  /* 显著增大图标容器 */
+  border-radius: 1.5rem;
+  /* 容器圆角 */
+  display: flex;
+  /* 弹性布局 */
+  align-items: center;
+  /* 垂直居中 */
   justify-content: center;
-  margin-bottom: 1.5rem;
+  /* 水平居中 */
+  margin-bottom: 2rem;
+  /* 增加下边距 */
+  transition: transform 0.2s ease;
+  /* 快速过渡 */
 }
 
-/* 功能标题 */
+.feature-card:hover .feature-icon {
+  transform: rotate(15deg) scale(1.15);
+  /* 悬停图标大幅旋转放大 */
+}
+
+/* 卡通纯色主题 */
+.feature-icon.blue {
+  background-color: #3b82f6;
+  color: white;
+}
+
+/* 纯蓝背景 */
+.feature-icon.purple {
+  background-color: #a855f7;
+  color: white;
+}
+
+/* 纯紫背景 */
+.feature-icon.indigo {
+  background-color: #6366f1;
+  color: white;
+}
+
+/* 纯靛背景 */
+
 .feature-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  /* 增加标题字号 */
+  font-weight: 900;
+  /* 极粗字重 */
+  color: var(--slate-900);
+  /* 深色文字 */
+  margin-bottom: 1.25rem;
+  /* 下边距 */
 }
 
-@media (min-width: 640px) {
-  .feature-title {
-    font-size: 1.5rem;
-  }
-}
-
-/* 功能描述 */
 .feature-description {
-  color: var(--slate-500);
-  line-height: 1.7;
-  font-size: 0.875rem;
+  color: var(--slate-600);
+  /* 灰色文字 */
+  line-height: 1.5;
+  /* 紧凑行高 */
+  font-size: clamp(1.1rem, 3vw, 1.25rem);
+  /* 增加描述字号 */
+  font-weight: 700;
+  /* 加粗描述 */
 }
 
-@media (min-width: 640px) {
-  .feature-description {
-    font-size: 1rem;
-    line-height: 1.6;
-  }
+.card-bubble {
+  position: absolute;
+  /* 绝对定位装饰 */
+  top: -1.5rem;
+  /* 位置 */
+  right: -1.5rem;
+  /* 位置 */
+  width: 5rem;
+  /* 尺寸 */
+  height: 5rem;
+  /* 尺寸 */
+  background: rgba(0, 0, 0, 0.03);
+  /* 极淡背景 */
+  border-radius: 50%;
+  /* 圆形 */
 }
 </style>
