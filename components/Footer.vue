@@ -66,8 +66,8 @@ const navGroups = [
   {
     title: '传送门',
     links: [
-      { name: '冒险社区', url: 'https://pd.qq.com/s/9n7u1p' },
-      { name: 'QQ 频道', url: 'https://pd.qq.com/s/9n7u1p' }
+      { name: '冒险社区', url: 'https://qm.qq.com/q/EqzcoKCV4O' },
+      { name: 'QQ 频道', url: 'https://qm.qq.com/q/EqzcoKCV4O' }
     ]
   }
 ];
