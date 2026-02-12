@@ -12,7 +12,7 @@
               <span class="brand-title">炼丹蓝图</span> <!-- 缩小后的标题 -->
             </div>
             <p class="brand-text"> <!-- 描述文字 -->
-              致力于降低 AI 架构设计门槛，让每个人都能像玩积木一样，变出属于自己的 AI 魔法。
+              致力于降低 AI 架构创新门槛<br>让每个人都能成为 AI 架构师
             </p>
           </div>
 
@@ -20,7 +20,7 @@
             <div v-for="(group, groupIndex) in navGroups" :key="groupIndex" class="nav-group" v-motion :initial="{ opacity: 0, y: 20 }" :visibleOnce="{ opacity: 1, y: 0, transition: { delay: 300 + groupIndex * 100 } }"> <!-- 导航组居中对齐 -->
               <h4 class="group-name">{{ group.title }}</h4> <!-- 分组标题 -->
               <div class="link-stack"> <!-- 链接垂直堆叠 -->
-                <a v-for="(link, linkIndex) in group.links" :key="linkIndex" :href="link.url" class="footer-link" v-motion :initial="{ x: 0 }" :hovered="{ x: 8, color: '#9975f7' }"> <!-- 悬停反馈 -->
+                <a v-for="(link, linkIndex) in group.links" :key="linkIndex" :href="link.url" class="footer-link" v-motion :initial="{ x: 0, color: '#64748b' }" :enter="{ x: 0, color: '#64748b' }" :hovered="{ x: 8, color: '#9975f7', transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- 悬停平滑变色回弹 -->
                   <span class="dot"></span> <!-- 装饰小圆点 -->
                   {{ link.name }}
                 </a>
@@ -29,7 +29,7 @@
           </nav>
 
           <div class="social-section" v-motion :initial="{ opacity: 0, scale: 0.9 }" :visibleOnce="{ opacity: 1, scale: 1, transition: { delay: 500 } }"> <!-- 社交区居中 -->
-            <a href="https://github.com/kernyr/bmad" target="_blank" class="github-pill" v-motion :hovered="{ scale: 1.05, y: -5 }"> <!-- 精简后的药丸按钮 -->
+            <a href="https://github.com/ai-blueprint" target="_blank" class="github-pill" v-motion :initial="{ scale: 1, y: 0 }" :enter="{ scale: 1, y: 0 }" :hovered="{ scale: 1.05, y: -5, transition: { type: 'spring', stiffness: 300, damping: 15 } }"> <!-- 药丸按钮平滑回弹 -->
               <svg class="pill-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5c.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34c-.46-1.16-1.11-1.47-1.11-1.47c-.91-.62.07-.6.07-.6c1 .07 1.53 1.03 1.53 1.03c.87 1.52 2.34 1.07 2.91.83c.09-.65.35-1.09.63-1.34c-2.22-.25-4.55-1.11-4.55-4.92c0-1.11.38-2 1.03-2.71c-.1-.25-.45-1.29.1-2.64c0 0 .84-.27 2.75 1.02c.79-.22 1.63-.33 2.47-.33c.83 0 1.68.11 2.47.33c1.91-1.29 2.75-1.02 2.75-1.02c.55 1.35.2 2.39.1 2.64c.65.71 1.03 1.6 1.03 2.71c0 3.82-2.34 4.66-4.57 4.91c.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2Z" />
               </svg>
@@ -57,17 +57,9 @@ const currentYear = new Date().getFullYear();
 
 const navGroups = [
   {
-    title: '冒险地图',
-    links: [
-      { name: '魔法功能', url: '#features' },
-      { name: '进化蓝图', url: '#roadmap' }
-    ]
-  },
-  {
     title: '传送门',
     links: [
-      { name: '冒险社区', url: 'https://qm.qq.com/q/EqzcoKCV4O' },
-      { name: 'QQ 频道', url: 'https://qm.qq.com/q/EqzcoKCV4O' }
+      { name: 'QQ 交流群', url: 'https://qm.qq.com/q/EqzcoKCV4O' }
     ]
   }
 ];
@@ -123,6 +115,7 @@ const navGroups = [
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
+  flex-direction: column;
 }
 
 .logo-box {
@@ -146,6 +139,7 @@ const navGroups = [
   font-size: 1.5rem;
   /* 缩小标题字号 */
   font-weight: 900;
+  /* 极粗字重 */
   color: #0f172a;
   letter-spacing: -0.02em;
 }
@@ -163,6 +157,7 @@ const navGroups = [
   flex: 1 1 100%;
   display: flex;
   flex-wrap: wrap;
+  /* 自动换行 */
   gap: 2.5rem;
   justify-content: center;
 }
@@ -176,6 +171,7 @@ const navGroups = [
   font-size: 1rem;
   /* 缩小分组标题 */
   font-weight: 900;
+  /* 极粗字重 */
   color: #1e293b;
   margin-bottom: 1rem;
 }
@@ -253,6 +249,7 @@ const navGroups = [
   font-size: 0.9rem;
   /* 缩小版权字号 */
   font-weight: 800;
+  /* 加粗 */
   color: #94a3b8;
 }
 </style>
