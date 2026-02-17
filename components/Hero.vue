@@ -22,8 +22,8 @@
 .hero {
   padding: 8rem 0 6rem;
   /* 上方留出导航栏空间 */
-  background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
-  /* 从浅靛蓝渐变到白色 */
+  background: linear-gradient(180deg, var(--accent-50) 0%, #ffffff 100%);
+  /* 从浅强调色渐变到白色 */
 }
 
 .heroContent {
@@ -39,12 +39,12 @@
 
 .heroLogo {
   width: clamp(100px, 10cqw, 500px);
-  /* Logo宽度 */
+  /* 响应式Logo宽度 */
 }
 
 .heroTitle {
   font-size: clamp(0px, 10cqw, 60px);
-  /* 主标题字号 */
+  /* 响应式主标题字号 */
   font-weight: 800;
   /* 粗体 */
   color: var(--gray-800);
@@ -52,12 +52,12 @@
 }
 
 .heroSlogan {
- font-size: clamp(0px, 8cqw, 60px);
-  /* 副标题字号 */
+  font-size: clamp(0px, 8cqw, 60px);
+  /* 响应式副标题字号 */
   font-weight: 700;
   /* 粗体 */
-  color: var(--indigo-400);
-  /* 靛蓝色文字 */
+  color: var(--accent);
+  /* 强调色文字 */
 }
 
 .heroDescription {
@@ -87,8 +87,8 @@
   /* 按钮内边距 */
   border-radius: 0.75rem;
   /* 圆角 */
-  background-color: #8da8ff;
-  /* 靛蓝色背景 */
+  background-color: var(--accent);
+  /* 强调色背景 */
   color: white;
   /* 白色文字 */
   font-size: 0.9375rem;
@@ -97,17 +97,11 @@
   /* 半粗体 */
   text-decoration: none;
   /* 移除下划线 */
-  transition: background-color 0.2s;
-  /* 背景色过渡 */
-	
-box-shadow: 0px 0px 10px 0px rgba(141, 168, 255, 0.3);
+  transition: filter 0.2s;
+  /* 亮度过渡 */
+  box-shadow: 0 0 10px rgba(141, 168, 255, 0.3);
+  /* 强调色光晕 */
 }
-
-.buttonPrimary:hover, .buttonSecondary:hover {
-  filter: brightness(1.1);
-}
-
-/* 悬停加深背景 */
 
 .buttonSecondary {
   padding: 0.75rem 2rem;
@@ -116,18 +110,24 @@ box-shadow: 0px 0px 10px 0px rgba(141, 168, 255, 0.3);
   /* 圆角 */
   background-color: white;
   /* 白色背景 */
-  color: #8da8ff;
-  /* 靛蓝色文字 */
+  color: var(--accent);
+  /* 强调色文字 */
   font-size: 0.9375rem;
   /* 按钮文字大小 */
   font-weight: 600;
   /* 半粗体 */
   text-decoration: none;
   /* 移除下划线 */
-  transition: all 0.2s;
-  /* 全属性过渡 */
-  box-shadow: 0px 0px 10px 0px rgba(141, 168, 255, 0.3);
+  transition: filter 0.2s;
+  /* 亮度过渡 */
+  box-shadow: 0 0 10px rgba(141, 168, 255, 0.3);
+  /* 强调色光晕 */
 }
 
+.buttonPrimary:hover,
+.buttonSecondary:hover {
+  filter: brightness(1.1);
+}
 
+/* 悬停提亮 */
 </style>

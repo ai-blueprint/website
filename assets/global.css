@@ -1,19 +1,17 @@
 :root {
-  /* --- 主色调（靛蓝/紫色系） --- */
-  --indigo-50: #eef2ff;
-  /* 极浅靛蓝背景 */
-  --indigo-100: #e0e7ff;
-  /* 浅靛蓝 */
-  --indigo-200: #c7d2fe;
-  /* 靛蓝色200 */
-  --indigo-300: #a5b4fc;
-  /* 靛蓝色300 */
-  --indigo-400: #818cf8;
-  /* 靛蓝色400 */
-  --indigo-500: #6366f1;
-  /* 主色靛蓝 */
-  --indigo-600: #4f46e5;
-  /* 深靛蓝 */
+  /* --- 主强调色（基于 #8da8ff） --- */
+  --accent-50: #eef3ff;
+  /* 极浅强调色背景 */
+  --accent-100: #dce6ff;
+  /* 浅强调色 */
+  --accent-200: #b3c6ff;
+  /* 强调色边框 */
+  --accent-300: #a5b8ff;
+  /* 浅强调色卡片 */
+  --accent: #8da8ff;
+  /* 主强调色 */
+  --accent-dark: #7090ee;
+  /* 深强调色（悬停） */
 
   /* 灰色系 */
   --gray-50: #f9fafb;
@@ -21,13 +19,13 @@
   --gray-100: #f3f4f6;
   /* 浅灰 */
   --gray-200: #e5e7eb;
-  /* 灰色200 */
+  /* 灰色边框 */
   --gray-300: #d1d5db;
   /* 灰色300 */
   --gray-400: #9ca3af;
-  /* 灰色400 */
-  --gray-500: #6b7280;
   /* 中灰 */
+  --gray-500: #6b7280;
+  /* 深中灰 */
   --gray-600: #4b5563;
   /* 深灰 */
   --gray-700: #374151;
@@ -40,8 +38,6 @@
   /* 功能色 */
   --orange-400: #fb923c;
   /* 橙色 */
-  --orange-500: #f97316;
-  /* 深橙色 */
 
   /* 字体 */
   --font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
@@ -81,4 +77,31 @@ body {
   /* 水平居中 */
   padding: 0 1.5rem;
   /* 左右安全边距 */
+}
+
+/* --- 区块共有样式（Features / Prototype / Progress 共用） --- */
+.sectionTitle {
+  font-size: 1.5rem;
+  /* 区域标题字号 */
+  font-weight: 700;
+  /* 粗体 */
+  color: var(--gray-800);
+  /* 深灰色文字 */
+  margin-bottom: 0.75rem;
+  /* 与装饰线间距 */
+  text-align: center;
+  /* 居中 */
+}
+
+.titleUnderline {
+  width: 2rem;
+  /* 装饰线宽度 */
+  height: 5px;
+  /* 装饰线高度 */
+  background-color: var(--accent);
+  /* 强调色装饰线 */
+  margin: 0 auto 3rem;
+  /* 居中并留下间距 */
+  border-radius: 20px;
+  /* 圆角 */
 }

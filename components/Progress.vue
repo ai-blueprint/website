@@ -5,7 +5,7 @@
             <div class="titleUnderline"></div> <!-- 标题下方装饰线 -->
 
             <div class="progressGrid"> <!-- 2x2进度卡片网格 -->
-                <div v-for="(item, index) in progressList" :key="index" class="progressCard" :class="item.theme"> <!-- 进度卡片，直接用flex布局 -->
+                <div v-for="(item, index) in progressList" :key="index" class="progressCard" :class="item.theme"> <!-- 进度卡片 -->
                     <svg class="statusIcon" viewBox="0 0 24 24" fill="none"> <!-- 状态图标 -->
                         <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" /> <!-- 外圈 -->
                         <path v-if="item.icon === 'check'" d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /> <!-- 勾选 -->
@@ -22,52 +22,17 @@
 <script setup>
 // --- 算子层：定义进度数据 ---
 const progressList = [                                                   // 开发进度列表
-    { text: '调研选型完成', theme: 'themeIndigo', icon: 'check' },      // 已完成
-    { text: 'MVP试验开发结束', theme: 'themeIndigo', icon: 'check' },      // 已完成
-    { text: '开发正式工具', theme: 'themeOrange', icon: 'play' },       // 进行中
-    { text: '架构开源社区开发', theme: 'themeGray', icon: 'link' }        // 计划中
+    { text: '调研选型完成', theme: 'themeAccent', icon: 'check' },     // 已完成
+    { text: 'MVP试验开发结束', theme: 'themeAccent', icon: 'check' },     // 已完成
+    { text: '开发正式工具', theme: 'themeOrange', icon: 'play' },      // 进行中
+    { text: '架构开源社区开发', theme: 'themeGray', icon: 'link' }       // 计划中
 ];
 </script>
 
 <style scoped>
 section {
     padding: 5rem 0;
-    /* 上下内边距 */
-}
-
-.container {
-    max-width: 960px;
-    /* 内容最大宽度 */
-    margin: 0 auto;
-    /* 水平居中 */
-    padding: 0 1.5rem;
-    /* 左右安全边距 */
-    text-align: center;
-    /* 标题居中 */
-}
-
-.sectionTitle {
-    font-size: 1.5rem;
-    /* 区域标题字号 */
-    font-weight: 700;
-    /* 粗体 */
-    color: var(--gray-800);
-    /* 深灰色文字 */
-    margin-bottom: 0.75rem;
-    /* 与装饰线间距 */
-}
-
-.titleUnderline {
-  width: 2rem;
-  /* 装饰线宽度 */
-  height: 5px;
-  /* 装饰线高度 */
-  background-color: var(--indigo-500);
-  /* 靛蓝色装饰线 */
-  margin: 0 auto 3rem;
-  /* 居中并留下间距 */
-  border-radius: 20px;
-  /* 微圆角 */
+    /* 区块上下内边距 */
 }
 
 .progressGrid {
@@ -82,8 +47,9 @@ section {
 @media (max-width: 640px) {
     .progressGrid {
         grid-template-columns: 1fr;
-        /* 小屏单列 */
     }
+
+    /* 小屏单列 */
 }
 
 .progressCard {
@@ -105,14 +71,15 @@ section {
 
 .progressCard:hover {
     transform: translateY(-2px);
-    /* 悬停微浮 */
 }
 
-.themeIndigo {
-    background-color: var(--indigo-300);
+/* 悬停微浮 */
+
+.themeAccent {
+    background-color: var(--accent-300);
 }
 
-/* 靛蓝色背景 */
+/* 强调色背景 */
 .themeOrange {
     background-color: var(--orange-400);
 }

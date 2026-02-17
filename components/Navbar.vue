@@ -2,7 +2,7 @@
   <nav class="navbar"> <!-- 顶部固定导航栏 -->
     <div class="container navbarContent"> <!-- 合并容器和布局 -->
       <NuxtLink to="/" class="logoText"> <!-- 品牌名称 -->
-        <img src="assets/text-logo.svg" alt="炼丹蓝图" class="logoImage" />
+        <img :src="textLogoUrl" alt="炼丹蓝图" class="logoImage" /> <!-- 品牌SVG图标 -->
       </NuxtLink>
 
       <div class="navMenu"> <!-- 导航菜单 -->
@@ -17,6 +17,8 @@
 </template>
 
 <script setup>
+import textLogoUrl from '~/assets/text-logo.svg';                        // 导入品牌SVG资源
+
 // --- 算子层：定义菜单数据 ---
 const menuItems = [                                                      // 导航菜单项列表
   { name: '项目介绍', link: '#features' },                               // 跳转到项目介绍区
@@ -43,8 +45,8 @@ const menuItems = [                                                      // 导�
   /* 毛玻璃模糊效果 */
   border-bottom: 1px solid var(--gray-200);
   /* 底部细分割线 */
-
   padding: 0.5rem 0;
+  /* 上下内边距 */
 }
 
 .navbarContent {
@@ -60,10 +62,13 @@ const menuItems = [                                                      // 导�
 
 .logoText {
   display: flex;
+  /* 弹性布局 */
   align-items: center;
+  /* 垂直居中 */
   justify-content: center;
-  color: var(--indigo-500);
-  /* 靛蓝色品牌色 */
+  /* 水平居中 */
+  color: var(--accent);
+  /* 强调色品牌色 */
   text-decoration: none;
   /* 移除下划线 */
 }
@@ -97,18 +102,18 @@ const menuItems = [                                                      // 导�
 }
 
 .menuItem:hover {
-  color: var(--indigo-500);
+  color: var(--accent);
 }
 
-/* 悬停变靛蓝色 */
+/* 悬停变强调色 */
 
 .joinButton {
   padding: 0.4rem 1.25rem;
   /* 按钮内边距 */
   border-radius: 0.5rem;
   /* 圆角 */
-  background-color: var(--indigo-500);
-  /* 靛蓝色背景 */
+  background-color: var(--accent);
+  /* 强调色背景 */
   color: white;
   /* 白色文字 */
   font-size: 1rem;
@@ -122,7 +127,7 @@ const menuItems = [                                                      // 导�
 }
 
 .joinButton:hover {
-  background-color: var(--indigo-600);
+  background-color: var(--accent-dark);
 }
 
 /* 悬停加深背景 */

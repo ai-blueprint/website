@@ -18,43 +18,9 @@
 <style scoped>
 section {
     padding: 5rem 0;
-    /* 上下内边距 */
 }
 
-.container {
-    max-width: 960px;
-    /* 内容最大宽度 */
-    margin: 0 auto;
-    /* 水平居中 */
-    padding: 0 1.5rem;
-    /* 左右安全边距 */
-    text-align: center;
-    /* 内容居中 */
-}
-
-.sectionTitle {
-    font-size: 1.5rem;
-    /* 区域标题字号 */
-    font-weight: 700;
-    /* 粗体 */
-    color: var(--gray-800);
-    /* 深灰色文字 */
-    margin-bottom: 0.75rem;
-    /* 与装饰线间距 */
-}
-
-.titleUnderline {
-  width: 2rem;
-  /* 装饰线宽度 */
-  height: 5px;
-  /* 装饰线高度 */
-  background-color: var(--indigo-500);
-  /* 靛蓝色装饰线 */
-  margin: 0 auto 3rem;
-  /* 居中并留下间距 */
-  border-radius: 20px;
-  /* 微圆角 */
-}
+/* 区块上下内边距 */
 
 .previewFrame {
     border-radius: 0.75rem;

@@ -36,43 +36,9 @@ const cardList = [                                                       // 项�
 <style scoped>
 section {
   padding: 5rem 0;
-  /* 上下内边距 */
 }
 
-.container {
-  max-width: 960px;
-  /* 内容最大宽度 */
-  margin: 0 auto;
-  /* 水平居中 */
-  padding: 0 1.5rem;
-  /* 左右安全边距 */
-  text-align: center;
-  /* 内容居中 */
-}
-
-.sectionTitle {
-  font-size: 1.5rem;
-  /* 区域标题字号 */
-  font-weight: 700;
-  /* 粗体 */
-  color: var(--gray-800);
-  /* 深灰色文字 */
-  margin-bottom: 0.75rem;
-  /* 与装饰线间距 */
-}
-
-.titleUnderline {
-  width: 2rem;
-  /* 装饰线宽度 */
-  height: 5px;
-  /* 装饰线高度 */
-  background-color: var(--indigo-500);
-  /* 靛蓝色装饰线 */
-  margin: 0 auto 3rem;
-  /* 居中并留下间距 */
-  border-radius: 20px;
-  /* 微圆角 */
-}
+/* 区块上下内边距 */
 
 .cardGrid {
   display: grid;
@@ -93,15 +59,17 @@ section {
 
 .featureCard {
   background-color: #fff;
-  /* 极浅灰背景 */
+  /* 白色背景 */
   border-radius: 1rem;
   /* 圆角 */
   padding: 2.5rem 2rem;
   /* 内边距 */
+  text-align: center;
+  /* 内容居中 */
   transition: box-shadow 0.2s;
   /* 阴影过渡 */
-
-  box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
+  box-shadow: 0 0 20px rgba(141, 168, 255, 0.1);
+  /* 强调色淡阴影 */
 }
 
 .featureCard:hover {
@@ -114,16 +82,14 @@ section {
   /* 图标大小 */
   height: 3rem;
   /* 图标大小 */
-  color: var(--indigo-400);
-  /* 靛蓝色图标 */
+  color: var(--accent);
+  /* 强调色图标 */
   margin: 0 auto 1.25rem;
   /* 居中并留下间距 */
   padding: 0.5rem;
   /* 撑大可点击区域 */
   box-sizing: content-box;
-  /* 让padding不影响图标大小 */
-  /* background-color: var(--indigo-50); */
-  /* 浅靛蓝背景 */
+  /* padding不影响图标大小 */
   border-radius: 50%;
   /* 圆形 */
   display: block;
@@ -135,8 +101,8 @@ section {
   /* 卡片标题字号 */
   font-weight: 700;
   /* 粗体 */
-  color: var(--indigo-500);
-  /* 靛蓝色标题 */
+  color: var(--accent);
+  /* 强调色标题 */
   margin-bottom: 1rem;
   /* 与描述间距 */
 }
