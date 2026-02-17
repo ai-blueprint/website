@@ -41,6 +41,17 @@ export default defineNuxtConfig({
         { rel: "icon", type: "image/svg+xml", href: "/logo.svg" },       // 网站图标
         { rel: "canonical", href: siteUrl },                              // 规范链接
       ],
+      script: [
+        {                                                                // 百度统计脚本
+          children: `var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?9414f8e7144e4858d3108a8ada880d61";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();`,
+        }
+      ],
     },
   },
 
