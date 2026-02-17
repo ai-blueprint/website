@@ -1,101 +1,84 @@
 :root {
-  /* --- 新卡通配色方案 --- */
-  /* 基础色 */
-  --color-blue: #82cbfa;
-  /* 天蓝色 */
-  --color-red: #e3706c;
-  /* 珊瑚红 */
-  --color-pink: #e988cb;
-  /* 糖果粉 */
-  --color-orange: #ef8f68;
-  /* 活力橙 */
-  --color-purple-light: #bb6ef7;
-  /* 薰衣草紫 */
-  --color-purple-deep: #9975f7;
-  /* 梦幻紫 */
-  --color-teal: #75cdbc;
-  /* 薄荷绿 */
-  --color-green: #a0d45c;
-  /* 嫩草绿 */
-  --color-peach: #f2a983;
-  /* 蜜桃色 */
-  --color-yellow-warm: #f3b65a;
-  /* 暖阳黄 */
-  --color-yellow-bright: #f2ce57;
-  /* 柠檬黄 */
+  /* --- 主色调（靛蓝/紫色系） --- */
+  --indigo-50: #eef2ff;
+  /* 极浅靛蓝背景 */
+  --indigo-100: #e0e7ff;
+  /* 浅靛蓝 */
+  --indigo-200: #c7d2fe;
+  /* 靛蓝色200 */
+  --indigo-300: #a5b4fc;
+  /* 靛蓝色300 */
+  --indigo-400: #818cf8;
+  /* 靛蓝色400 */
+  --indigo-500: #6366f1;
+  /* 主色靛蓝 */
+  --indigo-600: #4f46e5;
+  /* 深靛蓝 */
 
-  /* 语义色 */
-  --primary-color: var(--color-blue);
-  /* 主题色 */
-  --brand-bg: #ffffff;
-  /* 纯白背景 */
-  --slate-50: #f8fafc;
+  /* 灰色系 */
+  --gray-50: #f9fafb;
   /* 极浅灰 */
-  --slate-100: #f1f5f9;
+  --gray-100: #f3f4f6;
   /* 浅灰 */
-  --slate-900: #1e293b;
-  /* 深色文字 */
+  --gray-200: #e5e7eb;
+  /* 灰色200 */
+  --gray-300: #d1d5db;
+  /* 灰色300 */
+  --gray-400: #9ca3af;
+  /* 灰色400 */
+  --gray-500: #6b7280;
+  /* 中灰 */
+  --gray-600: #4b5563;
+  /* 深灰 */
+  --gray-700: #374151;
+  /* 更深灰 */
+  --gray-800: #1f2937;
+  /* 近黑灰 */
+  --gray-900: #111827;
+  /* 最深灰 */
+
+  /* 功能色 */
+  --orange-400: #fb923c;
+  /* 橙色 */
+  --orange-500: #f97316;
+  /* 深橙色 */
 
   /* 字体 */
-  --font-family: "Noto Sans SC", sans-serif;
-  /* 标准中文字体 */
+  --font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  /* 中文优先字体栈 */
 }
 
 * {
   margin: 0;
-  /* 清除外边距 */
+  /* 清除默认外边距 */
   padding: 0;
-  /* 清除内边距 */
+  /* 清除默认内边距 */
   box-sizing: border-box;
-  /* 盒模型规范 */
+  /* 盒模型包含边框 */
 }
 
 body {
   font-family: var(--font-family);
   /* 应用全局字体 */
-  background-color: var(--brand-bg);
-  /* 应用背景色 */
-  color: var(--slate-900);
-  /* 应用文字色 */
-  line-height: 1.5;
+  background-color: #ffffff;
+  /* 纯白背景 */
+  color: var(--gray-900);
+  /* 深色默认文字 */
+  line-height: 1.6;
   /* 舒适行高 */
   overflow-x: hidden;
-  /* 禁止横向溢出 */
+  /* 禁止横向滚动 */
   -webkit-font-smoothing: antialiased;
-  /* 字体平滑 */
+  /* 字体抗锯齿 */
 }
 
-/* --- 全局卡通按钮基类 --- */
-.btn-primary {
-  background-color: var(--primary-color);
-  /* 纯色背景 */
-  color: white;
-  /* 白色文字 */
-  border-radius: 1rem;
-  /* 适中圆角 */
-  padding: 0.75rem 1.5rem;
-  /* 紧凑内边距 */
-  font-weight: 800;
-  /* 极粗字重 */
-  box-shadow: 0 4px 0 #5da9e6;
-  /* 立体阴影 */
-  transition: all 0.1s;
-  /* 极速反馈 */
-}
-
-.btn-primary:active {
-  transform: translateY(2px);
-  /* 按下位移 */
-  box-shadow: 0 2px 0 #5da9e6;
-  /* 阴影缩短 */
-}
-
-/* --- 响应式容器 --- */
+/* --- 全局容器 --- */
 .container {
-  max-width: 1100px;
-  /* 缩小最大宽度 */
+  max-width: 960px;
+  /* 内容最大宽度 */
   margin: 0 auto;
-  /* 居中 */
-  padding: 0 1.25rem;
-  /* 侧边距 */
+  /* 水平居中 */
+  padding: 0 1.5rem;
+  /* 左右安全边距 */
 }

@@ -1,103 +1,152 @@
 <template>
-  <section id="features" class="features"> <!-- 核心特性区域 -->
+  <section id="features"> <!-- 项目介绍区域 -->
     <div class="container"> <!-- 内容定宽容器 -->
-      <header class="section-header" v-motion :initial="{ opacity: 0, y: 30 }" :visibleOnce="{ opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 20 } }"> <!-- 标题平滑进入 -->
-        <h2 class="section-title">超厉害的核心功能</h2> <!-- 卡通化标题 -->
-        <p class="section-description"> <!-- 副标题描述 -->
-          专注于 AI 架构设计的快乐与效率，让复杂的模型结构像拼图一样简单
-        </p>
-      </header>
+      <h2 class="sectionTitle">项目介绍</h2> <!-- 区域主标题 -->
+      <div class="titleUnderline"></div> <!-- 标题下方装饰线 -->
 
-      <div class="features-layout"> <!-- 弹性布局容器 -->
-        <FeatureCard v-for="(featureItem, featureIndex) in featureList" :key="featureIndex" :title="featureItem.title" :description="featureItem.description" :icon="featureItem.icon" :color="featureItem.color" v-motion :initial="{ opacity: 0, scale: 0.9, y: 30 }" :visibleOnce="{
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          transition: { delay: featureIndex * 100, type: 'spring', stiffness: 200, damping: 25 }
-        }" /> <!-- 自动平滑弹入的卡片 -->
+      <div class="cardGrid"> <!-- 两列卡片网格 -->
+        <article v-for="(card, index) in cardList" :key="index" class="featureCard"> <!-- 特性卡片 -->
+          <svg class="cardIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"> <!-- 图标 -->
+            <path stroke-linecap="round" stroke-linejoin="round" :d="card.iconPath" /> <!-- 图标路径 -->
+          </svg>
+          <h3 class="cardTitle">{{ card.title }}</h3> <!-- 卡片标题 -->
+          <p v-for="(line, lineIndex) in card.lines" :key="lineIndex" class="cardLine">{{ line }}</p> <!-- 描述行 -->
+        </article>
       </div>
     </div>
   </section>
 </template>
 
 <script setup>
-// --- 算子层：定义静态数据 ---
-const featureList = [                                                   // 核心功能数据列表
+// --- 算子层：定义卡片数据 ---
+const cardList = [                                                       // 项目介绍卡片列表
   {
-    title: "魔法架构设计",                                              // 功能名称
-    description: "拖拽节点即可构建复杂的神经网络，彻底告别枯燥的纯代码编写方式。", // 功能描述
-    icon: "Layout",                                                     // 图标标识
-    color: "blue"                                                       // 主题色
+    title: '启蒙',                                                       // 第一张卡片标题
+    iconPath: 'M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1', // 链接图标
+    lines: ['推动青少年AI教育的启蒙', '成为易于理解的教育工具']             // 描述文字
   },
   {
-    title: "一键变出代码",                                               // 功能名称
-    description: "支持导出工业级的 PyTorch 代码，让你的奇思妙想瞬间变成现实。",    // 功能描述
-    icon: "Code",                                                       // 图标标识
-    color: "purple"                                                     // 主题色
-  },
-  {
-    title: "组件大宝库",                                                // 功能名称
-    description: "内置海量深度学习组件，像玩乐高一样组装你的专属 AI 模型。",      // 功能描述
-    icon: "Layers",                                                     // 图标标识
-    color: "indigo"                                                     // 主题色
+    title: '目标',                                                       // 第二张卡片标题
+    iconPath: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z',         // 目标勾选图标
+    lines: ['致力于降低 AI 架构创新门槛', '让每个人都能成为 AI 架构师']    // 描述文字
   }
 ];
 </script>
 
 <style scoped>
-.features {
-  padding: clamp(4rem, 10vw, 8rem) 0;
-  /* 响应式上下内边距 */
-  background-color: #fdfeff;
-  /* 极浅蓝背景 */
+section {
+  padding: 5rem 0;
+  /* 上下内边距 */
 }
 
 .container {
-  max-width: 1100px;
-  /* 最大宽度 */
+  max-width: 960px;
+  /* 内容最大宽度 */
   margin: 0 auto;
-  /* 居中 */
-  padding: 0 1.25rem;
-  /* 左右边距 */
-}
-
-.section-header {
+  /* 水平居中 */
+  padding: 0 1.5rem;
+  /* 左右安全边距 */
   text-align: center;
-  /* 文字居中 */
-  margin-bottom: clamp(3rem, 8vw, 5rem);
-  /* 响应式下边距 */
+  /* 内容居中 */
 }
 
-.section-title {
-  font-size: clamp(2rem, 6vw, 3rem);
-  /* 响应式标题字号 */
-  font-weight: 900;
-  /* 极粗字重 */
-  color: var(--slate-900);
-  /* 深色文字 */
-  margin-bottom: 1.5rem;
-  /* 下边距 */
+.sectionTitle {
+  font-size: 1.5rem;
+  /* 区域标题字号 */
+  font-weight: 700;
+  /* 粗体 */
+  color: var(--gray-800);
+  /* 深灰色文字 */
+  margin-bottom: 0.75rem;
+  /* 与装饰线间距 */
 }
 
-.section-description {
-  font-size: clamp(1.1rem, 2.5vw, 1.25rem);
-  /* 响应式描述字号 */
-  color: var(--slate-600);
+.titleUnderline {
+  width: 2rem;
+  /* 装饰线宽度 */
+  height: 3px;
+  /* 装饰线高度 */
+  background-color: var(--indigo-500);
+  /* 靛蓝色装饰线 */
+  margin: 0 auto 3rem;
+  /* 居中并留下间距 */
+  border-radius: 2px;
+  /* 微圆角 */
+}
+
+.cardGrid {
+  display: grid;
+  /* 网格布局 */
+  grid-template-columns: repeat(2, 1fr);
+  /* 两列等宽 */
+  gap: 1.5rem;
+  /* 卡片间距 */
+}
+
+@media (max-width: 640px) {
+  .cardGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* 小屏单列 */
+}
+
+.featureCard {
+  background-color: var(--gray-50);
+  /* 极浅灰背景 */
+  border: 1px solid var(--gray-200);
+  /* 浅灰边框 */
+  border-radius: 0.75rem;
+  /* 圆角 */
+  padding: 2.5rem 2rem;
+  /* 内边距 */
+  transition: box-shadow 0.2s;
+  /* 阴影过渡 */
+}
+
+.featureCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  /* 悬停浮起阴影 */
+}
+
+.cardIcon {
+  width: 1.25rem;
+  /* 图标大小 */
+  height: 1.25rem;
+  /* 图标大小 */
+  color: var(--indigo-400);
+  /* 靛蓝色图标 */
+  margin: 0 auto 1.25rem;
+  /* 居中并留下间距 */
+  padding: 0.875rem;
+  /* 撑大可点击区域 */
+  box-sizing: content-box;
+  /* 让padding不影响图标大小 */
+  background-color: var(--indigo-50);
+  /* 浅靛蓝背景 */
+  border-radius: 50%;
+  /* 圆形 */
+  display: block;
+  /* 块级居中 */
+}
+
+.cardTitle {
+  font-size: 1.125rem;
+  /* 卡片标题字号 */
+  font-weight: 700;
+  /* 粗体 */
+  color: var(--indigo-500);
+  /* 靛蓝色标题 */
+  margin-bottom: 1rem;
+  /* 与描述间距 */
+}
+
+.cardLine {
+  font-size: 0.9375rem;
+  /* 描述文字字号 */
+  color: var(--gray-600);
   /* 灰色文字 */
-  max-width: 42rem;
-  /* 最大宽度 */
-  margin: 0 auto;
-  /* 居中 */
-}
-
-.features-layout {
-  display: flex;
-  /* 弹性布局 */
-  flex-wrap: wrap;
-  /* 自动换行适配多端 */
-  gap: 2rem;
-  /* 增加卡片间距 */
-  justify-content: center;
-  /* 居中排列 */
+  line-height: 1.8;
+  /* 行高 */
 }
 </style>
