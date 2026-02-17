@@ -44,16 +44,16 @@ section {
 }
 
 .titleUnderline {
-    width: 2rem;
-    /* 装饰线宽度 */
-    height: 3px;
-    /* 装饰线高度 */
-    background-color: var(--indigo-500);
-    /* 靛蓝色装饰线 */
-    margin: 0 auto 3rem;
-    /* 居中并留下间距 */
-    border-radius: 2px;
-    /* 微圆角 */
+  width: 2rem;
+  /* 装饰线宽度 */
+  height: 5px;
+  /* 装饰线高度 */
+  background-color: var(--indigo-500);
+  /* 靛蓝色装饰线 */
+  margin: 0 auto 3rem;
+  /* 居中并留下间距 */
+  border-radius: 20px;
+  /* 微圆角 */
 }
 
 .previewFrame {

@@ -64,13 +64,13 @@ section {
 .titleUnderline {
   width: 2rem;
   /* 装饰线宽度 */
-  height: 3px;
+  height: 5px;
   /* 装饰线高度 */
   background-color: var(--indigo-500);
   /* 靛蓝色装饰线 */
   margin: 0 auto 3rem;
   /* 居中并留下间距 */
-  border-radius: 2px;
+  border-radius: 20px;
   /* 微圆角 */
 }
 
@@ -79,7 +79,7 @@ section {
   /* 网格布局 */
   grid-template-columns: repeat(2, 1fr);
   /* 两列等宽 */
-  gap: 1.5rem;
+  gap: 3rem;
   /* 卡片间距 */
 }
 
@@ -92,7 +92,7 @@ section {
 }
 
 .featureCard {
-  background-color: var(--gray-50);
+  background-color: #fff;
   /* 极浅灰背景 */
   border-radius: 1rem;
   /* 圆角 */
@@ -101,7 +101,7 @@ section {
   transition: box-shadow 0.2s;
   /* 阴影过渡 */
 
-box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
+  box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
 }
 
 .featureCard:hover {
@@ -110,19 +110,19 @@ box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
 }
 
 .cardIcon {
-  width: 1.25rem;
+  width: 3rem;
   /* 图标大小 */
-  height: 1.25rem;
+  height: 3rem;
   /* 图标大小 */
   color: var(--indigo-400);
   /* 靛蓝色图标 */
   margin: 0 auto 1.25rem;
   /* 居中并留下间距 */
-  padding: 0.875rem;
+  padding: 0.5rem;
   /* 撑大可点击区域 */
   box-sizing: content-box;
   /* 让padding不影响图标大小 */
-  background-color: var(--indigo-50);
+  /* background-color: var(--indigo-50); */
   /* 浅靛蓝背景 */
   border-radius: 50%;
   /* 圆形 */
@@ -131,7 +131,7 @@ box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
 }
 
 .cardTitle {
-  font-size: 1.125rem;
+  font-size: 2rem;
   /* 卡片标题字号 */
   font-weight: 700;
   /* 粗体 */
@@ -142,7 +142,7 @@ box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
 }
 
 .cardLine {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   /* 描述文字字号 */
   color: var(--gray-600);
   /* 灰色文字 */
