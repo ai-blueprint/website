@@ -55,7 +55,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ["~/assets/styles/global.css"],                                   // 全局样式表
+  css: ["~/assets/global.css"],                                   // 全局样式表
 
   modules: [
     "@nuxt/image",                                                       // 图片优化模块

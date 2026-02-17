@@ -94,14 +94,14 @@ section {
 .featureCard {
   background-color: var(--gray-50);
   /* 极浅灰背景 */
-  border: 1px solid var(--gray-200);
-  /* 浅灰边框 */
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   /* 圆角 */
   padding: 2.5rem 2rem;
   /* 内边距 */
   transition: box-shadow 0.2s;
   /* 阴影过渡 */
+
+box-shadow: 0px 0px 20px 0px rgba(36, 146, 255, 0.1);
 }
 
 .featureCard:hover {

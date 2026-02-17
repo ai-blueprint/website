@@ -38,36 +38,26 @@
 }
 
 .heroLogo {
-  width: 7rem;
+  width: clamp(100px, 10cqw, 500px);
   /* Logo宽度 */
-  height: 7rem;
-  /* Logo高度 */
-  margin-bottom: 1.5rem;
-  /* 与标题的间距 */
-  opacity: 0.35;
-  /* 半透明淡化效果 */
 }
 
 .heroTitle {
-  font-size: 2.5rem;
+  font-size: clamp(0px, 10cqw, 60px);
   /* 主标题字号 */
   font-weight: 800;
   /* 粗体 */
   color: var(--gray-800);
   /* 深灰色文字 */
-  margin-bottom: 0.75rem;
-  /* 与副标题间距 */
 }
 
 .heroSlogan {
-  font-size: 2.25rem;
+ font-size: clamp(0px, 8cqw, 60px);
   /* 副标题字号 */
   font-weight: 700;
   /* 粗体 */
   color: var(--indigo-400);
   /* 靛蓝色文字 */
-  margin-bottom: 1.25rem;
-  /* 与描述文字间距 */
 }
 
 .heroDescription {
@@ -95,9 +85,9 @@
 .buttonPrimary {
   padding: 0.75rem 2rem;
   /* 按钮内边距 */
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   /* 圆角 */
-  background-color: var(--indigo-500);
+  background-color: #8da8ff;
   /* 靛蓝色背景 */
   color: white;
   /* 白色文字 */
@@ -109,10 +99,12 @@
   /* 移除下划线 */
   transition: background-color 0.2s;
   /* 背景色过渡 */
+	
+box-shadow: 0px 0px 10px 0px rgba(141, 168, 255, 0.3);
 }
 
-.buttonPrimary:hover {
-  background-color: var(--indigo-600);
+.buttonPrimary:hover, .buttonSecondary:hover {
+  filter: brightness(1.1);
 }
 
 /* 悬停加深背景 */
@@ -120,11 +112,11 @@
 .buttonSecondary {
   padding: 0.75rem 2rem;
   /* 按钮内边距 */
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   /* 圆角 */
   background-color: white;
   /* 白色背景 */
-  color: var(--indigo-500);
+  color: #8da8ff;
   /* 靛蓝色文字 */
   font-size: 0.9375rem;
   /* 按钮文字大小 */
@@ -132,16 +124,10 @@
   /* 半粗体 */
   text-decoration: none;
   /* 移除下划线 */
-  border: 1px solid var(--indigo-200);
-  /* 浅靛蓝边框 */
   transition: all 0.2s;
   /* 全属性过渡 */
+  box-shadow: 0px 0px 10px 0px rgba(141, 168, 255, 0.3);
 }
 
-.buttonSecondary:hover {
-  border-color: var(--indigo-400);
-  /* 悬停边框加深 */
-  background-color: var(--indigo-50);
-  /* 悬停浅靛蓝背景 */
-}
+
 </style>

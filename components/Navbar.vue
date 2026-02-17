@@ -1,7 +1,9 @@
 <template>
   <nav class="navbar"> <!-- 顶部固定导航栏 -->
     <div class="container navbarContent"> <!-- 合并容器和布局 -->
-      <NuxtLink to="/" class="logoText">炼丹蓝图</NuxtLink> <!-- 品牌名称 -->
+      <NuxtLink to="/" class="logoText"> <!-- 品牌名称 -->
+        <img src="assets/text-logo.svg" alt="炼丹蓝图" class="logoImage" />
+      </NuxtLink>
 
       <div class="navMenu"> <!-- 导航菜单 -->
         <a v-for="(item, index) in menuItems" :key="index" :href="item.link" class="menuItem"> <!-- 菜单项 -->
@@ -41,6 +43,8 @@ const menuItems = [                                                      // 导�
   /* 毛玻璃模糊效果 */
   border-bottom: 1px solid var(--gray-200);
   /* 底部细分割线 */
+
+  padding: 0.5rem 0;
 }
 
 .navbarContent {
@@ -55,10 +59,9 @@ const menuItems = [                                                      // 导�
 }
 
 .logoText {
-  font-size: 1.25rem;
-  /* 品牌文字大小 */
-  font-weight: 800;
-  /* 粗体 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--indigo-500);
   /* 靛蓝色品牌色 */
   text-decoration: none;
@@ -108,7 +111,7 @@ const menuItems = [                                                      // 导�
   /* 靛蓝色背景 */
   color: white;
   /* 白色文字 */
-  font-size: 0.875rem;
+  font-size: 1rem;
   /* 按钮文字大小 */
   font-weight: 600;
   /* 半粗体 */
