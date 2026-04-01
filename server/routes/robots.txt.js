@@ -3,7 +3,7 @@
  */
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig();                                     // 获取运行时配置
-  const siteUrl = config.public.siteUrl || 'https://aib.hujiarong.site'; // 网站域名
+  const siteUrl = config.public.siteUrl || 'https://aib.lingloft.cn'; // 网站域名
 
   const robots = `User-agent: *
 Allow: /

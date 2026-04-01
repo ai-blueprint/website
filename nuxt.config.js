@@ -1,7 +1,7 @@
 /**
  * Nuxt 配置文件
  */
-const siteUrl = "https://aib.hujiarong.site";                           // 网站正式域名
+const siteUrl = "https://aib.lingloft.cn";                           // 网站正式域名
 
 export default defineNuxtConfig({
   ssr: true,                                                             // 开启服务端渲染以利于SEO
@@ -40,10 +40,6 @@ export default defineNuxtConfig({
       link: [
         { rel: "icon", type: "image/svg+xml", href: "/logo.svg" },       // 网站图标
         { rel: "canonical", href: siteUrl },                              // 规范链接
-      ],
-      script: [
-        { innerHTML: 'var _hmt = _hmt || [];' },                        // 百度统计：初始化事件队列
-        { src: 'https://hm.baidu.com/hm.js?9414f8e7144e4858d3108a8ada880d61', async: true }, // 百度统计：加载追踪脚本
       ],
     },
   },

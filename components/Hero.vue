@@ -7,8 +7,8 @@
       <p class="heroDescription">用蓝图的形式设计AI架构。拖拽节点、连线，无需编写任何代码</p> <!-- 功能描述 -->
 
       <div class="heroActions"> <!-- 按钮组 -->
-        <a href="https://qm.qq.com/q/EqzcoKCV4O" target="_blank" class="buttonPrimary">加入社区</a> <!-- 主按钮 -->
-        <a href="https://github.com/ai-blueprint" target="_blank" class="buttonSecondary">查看仓库</a> <!-- 次按钮 -->
+        <a href="https://editor.lingloft.cn/" target="_blank" rel="noopener noreferrer" class="buttonPrimary">立即体验</a> <!-- 主按钮：直达在线编辑器 -->
+        <a href="https://github.com/ai-blueprint" target="_blank" rel="noopener noreferrer" class="buttonSecondary">查看仓库</a> <!-- 次按钮：查看开源代码 -->
       </div>
     </div>
   </section>
