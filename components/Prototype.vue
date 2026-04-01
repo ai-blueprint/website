@@ -11,9 +11,6 @@
             <div class="prototypeActions"> <!-- 体验入口按钮区域 -->
                 <a href="https://editor.lingloft.cn/" target="_blank" rel="noopener noreferrer" class="experienceButton">打开在线编辑器体验</a> <!-- 外链打开在线编辑器，减少用户寻找入口成本 -->
             </div>
-            <div class="vtuberShowcase"> <!-- VTuber形象展示区 -->
-                <img src="/images/VTuberLogo.svg" alt="炼丹蓝图 VTuber 形象展示" class="vtuberImage"> <!-- 首页大图展示，突出品牌形象 -->
-            </div>
         </div>
     </section>
 </template>
@@ -84,19 +81,4 @@ section {
     /* 悬停时轻微提亮，给出交互反馈 */
 }
 
-.vtuberShowcase {
-    margin-top: 2.5rem;
-    /* 与体验按钮拉开层级间距 */
-    overflow: hidden;
-    /* 裁剪超出内容，保证圆角生效 */
-}
-
-.vtuberImage {
-    display: block;
-    /* 变为块级元素，消除默认底部空隙 */
-    width: 100%;
-    /* 大图自适应容器宽度 */
-    height: auto;
-    /* 按比例缩放，避免拉伸 */
-}
 </style>

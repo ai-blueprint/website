@@ -9,6 +9,12 @@
       <Progress /> <!-- 开发进度区 -->
     </main>
 
+    <section class="vtuberShowcase"> <!-- 页面底部VTuber大图展示区 -->
+      <div class="container"> <!-- 复用全局容器宽度 -->
+        <img src="/images/VTuberLogo.svg" alt="炼丹蓝图 VTuber 形象展示" class="vtuberImage"> <!-- 在页脚上方展示品牌形象大图 -->
+      </div>
+    </section>
+
     <Footer /> <!-- 页脚信息栏 -->
   </div>
 </template>
@@ -30,5 +36,19 @@ useHead({
 .mainContent {
   padding-top: 3.5rem;
   /* 为固定导航栏留出空间 */
+}
+
+.vtuberShowcase {
+  padding: 0 0 3rem;
+  /* 放在页脚上方，给底部留出展示空间 */
+}
+
+.vtuberImage {
+  display: block;
+  /* 去掉图片默认底部空隙 */
+  width: 100%;
+  /* 大图自适应容器宽度 */
+  height: auto;
+  /* 保持原图比例不拉伸 */
 }
 </style>
