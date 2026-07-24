@@ -11,7 +11,7 @@
         </a>
       </div>
 
-      <a href="https://qm.qq.com/q/EqzcoKCV4O" target="_blank" class="joinButton">加入</a> <!-- 加入按钮 -->
+      <a href="https://qm.qq.com/q/EqzcoKCV4O" target="_blank" rel="noopener noreferrer" class="joinButton">加入</a> <!-- 加入按钮 -->
     </div>
   </nav>
 </template>

@@ -24,8 +24,8 @@
 const progressList = [                                                   // 开发进度列表
     { text: '调研选型完成', theme: 'themeAccent', icon: 'check' },     // 已完成
     { text: 'MVP试验开发结束', theme: 'themeAccent', icon: 'check' },     // 已完成
-    { text: '开发正式工具', theme: 'themeOrange', icon: 'play' },      // 进行中
-    { text: '架构开源社区开发', theme: 'themeGray', icon: 'link' }       // 计划中
+    { text: '正式工具核心闭环完成', theme: 'themeAccent', icon: 'check' }, // 已完成
+    { text: '节点与插件生态持续扩展', theme: 'themeOrange', icon: 'link' } // 持续进行
 ];
 </script>
 
